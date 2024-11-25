@@ -18,12 +18,12 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
@@ -32,12 +32,11 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun WaterIntakeList(
-    coroutineScope: CoroutineScope,
     waterIntakeRepository: WaterIntakeRepository,
     enableDelete: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-
+    val coroutineScope = rememberCoroutineScope()
     val allWaterIntakes by waterIntakeRepository.allIntakes.collectAsState()
     LazyColumn(
         modifier = modifier
@@ -90,15 +89,13 @@ private fun WaterIntakeRow(
 
         // Formatted date and time
         FormattedDateTime(
-            instant = waterIntake.date.toInstant(),
-            modifier = Modifier.weight(3f)
+            instant = waterIntake.date.toInstant(), modifier = Modifier.weight(3f)
         )
 
         // Delete button (if enabled)
         if (enableDelete) {
             IconButton(
-                onClick = onDelete,
-                modifier = Modifier.padding(start = 8.dp)
+                onClick = onDelete, modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
@@ -112,9 +109,7 @@ private fun WaterIntakeRow(
 
 @Composable
 private fun FormattedDateTime(
-    instant: Instant,
-    zoneId: ZoneId = ZoneId.systemDefault(),
-    modifier: Modifier = Modifier
+    instant: Instant, zoneId: ZoneId = ZoneId.systemDefault(), modifier: Modifier = Modifier
 ) {
     val now = LocalDateTime.now(zoneId)
     val dateTime = LocalDateTime.ofInstant(instant, zoneId)
@@ -129,8 +124,7 @@ private fun FormattedDateTime(
     val formattedTime = dateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
 
     Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = formattedDate,

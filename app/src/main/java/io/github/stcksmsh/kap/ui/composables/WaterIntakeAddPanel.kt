@@ -5,11 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
@@ -24,8 +30,8 @@ fun WaterIntakeAddPanel(
     modifier: Modifier = Modifier,
     settingsData: SettingsData,
     waterIntakeRepository: WaterIntakeRepository,
-    coroutineScope: CoroutineScope
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -106,10 +112,12 @@ private fun CustomWaterIntakeAddButton(
     coroutineScope: CoroutineScope,
     selectedVolumeUnits: VolumeUnits
 ) {
+    // State to manage the visibility of the dialog
+    var showDialog by remember { mutableStateOf(false) }
+
+    // Button to trigger the dialog
     Button(
-        onClick = {
-            // TODO: Implement custom dialog logic for entering a custom amount
-        },
+        onClick = { showDialog = true },
         modifier = modifier
     ) {
         Text(
@@ -117,4 +125,67 @@ private fun CustomWaterIntakeAddButton(
             maxLines = 1
         )
     }
+
+    // Dialog for entering a custom amount
+    if (showDialog) {
+        CustomAmountDialog(
+            onConfirm = { customAmount ->
+                coroutineScope.launch {
+                    waterIntakeRepository.insertWaterIntake(
+                        WaterIntake(
+                            intakeAmount = customAmount,
+                            date = Date()
+                        )
+                    )
+                }
+                showDialog = false
+            },
+            onDismiss = { showDialog = false },
+            selectedVolumeUnits = selectedVolumeUnits
+        )
+    }
+}
+
+@Composable
+fun CustomAmountDialog(
+    onConfirm: (Float) -> Unit,
+    onDismiss: () -> Unit,
+    selectedVolumeUnits: VolumeUnits
+) {
+    var customAmount by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text("Enter Custom Amount")
+        },
+        text = {
+            Column {
+                OutlinedTextField(
+                    value = customAmount,
+                    onValueChange = { customAmount = it },
+                    label = { Text("Amount (${selectedVolumeUnits.symbol})") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val amount = customAmount.toFloatOrNull()
+                    if (amount != null && amount > 0) {
+                        onConfirm(amount)
+                    }
+                }
+            ) {
+                Text("Add")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    )
 }

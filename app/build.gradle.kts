@@ -50,7 +50,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
+    implementation("androidx.compose.runtime:runtime:$composeVersion")
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
 
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")

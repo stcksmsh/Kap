@@ -7,7 +7,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -18,7 +17,7 @@ fun NavigationDrawerContent(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(280.dp) // Set fixed width for the drawer
+            .width(230.dp) // Set fixed width for the drawer
             .background(MaterialTheme.colorScheme.surface) // Drawer background color
     ) {
         // Header Section with Primary Background
