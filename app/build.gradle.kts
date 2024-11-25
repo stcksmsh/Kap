@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("com.google.devtools.ksp")
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -8,7 +10,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "io.github.stcksmsh.kap" // Set to match your namespace
+        applicationId = "io.github.stcksmsh.kap"
         minSdk = 31
         targetSdk = 34
         versionCode = 1
@@ -23,25 +25,45 @@ android {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
 
+    compileOptions {
+        // Ensure consistency with Kotlin JVM target
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
     }
 }
 
 dependencies {
-    val composeVersion = "1.5.3" // Ensure compatibility with all Compose dependencies
+    val composeVersion = "1.5.3"
 
-    implementation("androidx.compose.material3:material3:1.3.1") // Updated to use composeVersion
+    // Compose dependencies
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     implementation("androidx.compose.ui:ui:$composeVersion")
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-//    implementation("androidx.compose.runtime:runtime-livedata:$composeVersion")
+    implementation(libs.androidx.activity.compose)
 
-    // For activities with Compose support
-    implementation("androidx.activity:activity-compose:$composeVersion")
-
-    // For testing
-    testImplementation("junit:junit:4.13.2")
-
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+    // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
+
+    // Room dependencies
+    val roomVersion = "2.5.2" // Replace with the latest Room version
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
+    // Optional - for Kotlin coroutines support
+    implementation("androidx.room:room-ktx:$roomVersion")
+
+    // Testing dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
 }

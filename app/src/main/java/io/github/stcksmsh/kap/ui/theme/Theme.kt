@@ -13,6 +13,7 @@ fun MyAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
+
     val context = LocalContext.current
     val colors = when {
         useDynamicColors && darkTheme -> dynamicDarkColorScheme(context)

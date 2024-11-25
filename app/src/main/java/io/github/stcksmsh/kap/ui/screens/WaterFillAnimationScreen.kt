@@ -1,6 +1,5 @@
-package io.github.stcksmsh.kap.ui
+package io.github.stcksmsh.kap.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
@@ -18,7 +17,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 @Composable
-fun WaterFillAnimationScreen(onAnimationEnd: () -> Unit = {}) {
+fun WaterFillAnimationScreen(modifier: Modifier = Modifier, onAnimationEnd: () -> Unit = {}) {
     val waterLevel = remember { Animatable(0f) }
     val waveOffset = remember { Animatable(0f) }
     val bubbles = remember { generateBubbles() }
@@ -29,10 +28,6 @@ fun WaterFillAnimationScreen(onAnimationEnd: () -> Unit = {}) {
 
     // Animation state to control fade-out effect
     var isFadeOut by remember { mutableStateOf(false) }
-    val fadeOutAlpha = animateFloatAsState(
-        targetValue = if (isFadeOut) 0f else 1f,
-        animationSpec = tween(durationMillis = 500), label = "fadeOut" // Fade-out duration
-    )
 
     // Start the water fill animation
     LaunchedEffect(Unit) {
@@ -55,9 +50,8 @@ fun WaterFillAnimationScreen(onAnimationEnd: () -> Unit = {}) {
     }
 
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .graphicsLayer(alpha = fadeOutAlpha.value) // Apply fade-out
     ) {
         val screenHeight = this@BoxWithConstraints.constraints.maxHeight.toFloat()
         val screenWidth = this@BoxWithConstraints.constraints.maxWidth.toFloat()

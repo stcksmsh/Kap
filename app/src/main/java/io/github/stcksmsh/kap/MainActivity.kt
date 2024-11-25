@@ -3,88 +3,129 @@ package io.github.stcksmsh.kap
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import io.github.stcksmsh.kap.data.WaterIntakeDatabase
+import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserData
-import io.github.stcksmsh.kap.data.loadUserData
-import io.github.stcksmsh.kap.data.saveUserData
-import io.github.stcksmsh.kap.ui.UserInputScreen
-import io.github.stcksmsh.kap.ui.WaterFillAnimationScreen
+import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.ui.screens.HomeScreen
+import io.github.stcksmsh.kap.ui.screens.SimpleWaterFillAnimationScreen
+import io.github.stcksmsh.kap.ui.screens.InitialSetupScreen
 import io.github.stcksmsh.kap.ui.theme.MyAppTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    lateinit var waterIntakeRepository: WaterIntakeRepository
+        private set
+
+    private lateinit var database: WaterIntakeDatabase
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+         database = Room.databaseBuilder(
+            applicationContext,
+            WaterIntakeDatabase::class.java,
+            "water_intake_database"
+        ).build()
+
+        waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
+
         setContent {
-            var showInputScreen by remember { mutableStateOf(!hasUserData(this)) }
-            var showAnimation by remember { mutableStateOf(true) }
+            val navController = rememberNavController()
+
+            val settingsData = loadSettingsData(this)
+
+            var showInputScreen = !hasUserData(this)
+            var showAnimation = settingsData.startupAnimationEnabled
             val context = this
 
-            // Single fadeAlpha for both fade-out and fade-in transitions
-            var fadeAlpha by remember { mutableStateOf(1f) }
-            val animationDuration = 500
-            val animatedAlpha = animateFloatAsState(
-                targetValue = fadeAlpha,
-                animationSpec = tween(durationMillis = animationDuration), label = ""
-            )
 
-            val coroutineScope = rememberCoroutineScope()
+            val startDestination = when {
+                showAnimation -> "animation"
+                showInputScreen -> "input"
+                else -> "home"
+            }
+
+            val animationDuration = 500
+
+            val navigationEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
+                {
+                    slideInHorizontally(
+                        initialOffsetX = { -1000 }, animationSpec = tween(animationDuration)
+                    ) + fadeIn(animationSpec = tween(animationDuration))
+                }
+
+            val navigationExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? =
+                {
+                    slideOutHorizontally(
+                        targetOffsetX = { 1000 }, animationSpec = tween(animationDuration)
+                    ) + fadeOut(animationSpec = tween(animationDuration))
+                }
 
             MyAppTheme {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    when {
-                        showAnimation -> {
-                            // Display the initial water fill animation
-                            WaterFillAnimationScreen(
-                                onAnimationEnd = {
-                                    fadeAlpha = 0f // Start fade-out
-                                    // Delay the change to let fade-out complete
-                                    coroutineScope.launch {
-                                        delay(animationDuration.toLong())
-                                        showAnimation = false
-                                        fadeAlpha = 1f // Start fade-in
-                                    }
-                                }
-                            )
+                NavHost(
+                    navController = navController,
+                    startDestination = startDestination,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    composable(
+                        route = "animation",
+                        enterTransition = navigationEnterTransition,
+                        exitTransition = navigationExitTransition
+                    ) {
+                        // Display the initial water fill animation
+                        SimpleWaterFillAnimationScreen(
+                            context = context, animationDuration = 1500
+                        ) {
+                            navController.navigate(if (showInputScreen) "input" else "home")
                         }
-                        showInputScreen -> {
-                            // User input screen with fade-in/fade-out on exit
-                            UserInputScreen(
-                                modifier = Modifier.graphicsLayer { alpha = animatedAlpha.value },
-                            ) { userData ->
-                                fadeAlpha = 0f // Start fade-out when saving data
-                                // Delay transition to allow fade-out to complete
-                                coroutineScope.launch {
-                                    delay(animationDuration.toLong())
-                                    saveUserData(context, userData)
-                                    showInputScreen = false
-                                    fadeAlpha = 1f // Start fade-in for WaterAdditionScreen
-                                }
-                            }
+                    }
+                    composable(
+                        route = "input",
+                        enterTransition = navigationEnterTransition,
+                        exitTransition = navigationExitTransition
+                    ) {
+                        // User input screen with fade-in/fade-out on exit
+                        InitialSetupScreen(
+                            context = context
+                        ) {
+                            navController.navigate("home")
                         }
-                        else -> {
-                            // Main Water Addition Screen with fade-in effect
-                            Text(
-                                text = "Daily Intake: ${loadUserData(context)?.dalyWaterGoal ?: 0  } ml",
-                                modifier = Modifier.graphicsLayer { alpha = animatedAlpha.value }
-                            )
-                        }
+                    }
+                    composable(
+                        route = "home",
+                        enterTransition = navigationEnterTransition,
+                        exitTransition = navigationExitTransition
+                    ) {
+                        // Main Water Addition Screen with fade-in effect
+                        HomeScreen(
+                            context = context,
+                            waterIntakeRepository = waterIntakeRepository
+                        )
                     }
                 }
             }
+
         }
     }
 }
