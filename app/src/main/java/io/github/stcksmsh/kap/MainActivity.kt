@@ -20,10 +20,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.appwidget.updateAll
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -55,6 +54,10 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var database: WaterIntakeDatabase
 
+    companion object {
+        const val KEY_FROM_WIDGET = "from_widget"
+    }
+
     @OptIn(DelicateCoroutinesApi::class, FlowPreview::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +88,8 @@ class MainActivity : ComponentActivity() {
 
             val settingsData = loadSettingsData(this)
             val showInputScreen = !hasUserData(this)
-            val showAnimation = settingsData.startupAnimationEnabled
+            val fromWidget = intent.getBooleanExtra(KEY_FROM_WIDGET, false)
+            val showAnimation = settingsData.startupAnimationEnabled && !fromWidget
             val context = this
 
             val startDestination = when {

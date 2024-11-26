@@ -11,6 +11,8 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
@@ -24,6 +26,7 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import io.github.stcksmsh.kap.MainActivity
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.loadSettingsData
@@ -54,7 +57,13 @@ class WaterIntakeWidget : GlanceAppWidget() {
                 Column(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = GlanceModifier.padding(16.dp).width(125.dp)
+                    modifier = GlanceModifier.padding(16.dp).width(125.dp).clickable(
+                        actionStartActivity<MainActivity>(
+                            actionParametersOf(
+                                ActionParameters.Key<Boolean>(MainActivity.KEY_FROM_WIDGET) to true
+                            )
+                        )
+                    )
                 ) {
                     // Progress Bar Container
                     Box(
