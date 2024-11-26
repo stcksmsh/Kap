@@ -25,6 +25,8 @@ interface WaterIntakeDao {
     )
     fun getTodaysIntake(date: Date = Date()): Flow<Float>
 
+    @Query("SELECT * FROM water_intake ORDER BY date DESC LIMIT 1")
+    fun getLastIntake(): WaterIntake?
 
     @Delete
     suspend fun delete(waterIntake: WaterIntake)

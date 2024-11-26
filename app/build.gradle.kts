@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "io.github.stcksmsh.kap"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "io.github.stcksmsh.kap"
         minSdk = 31
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
     }
@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
-
+    implementation(libs.androidx.work.runtime.ktx)
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
 

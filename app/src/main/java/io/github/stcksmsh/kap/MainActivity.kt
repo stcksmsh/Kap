@@ -1,6 +1,7 @@
 package io.github.stcksmsh.kap
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -18,20 +19,33 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.glance.appwidget.updateAll
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserData
 import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadUserData
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
 import io.github.stcksmsh.kap.ui.theme.MyAppTheme
+import io.github.stcksmsh.kap.widget.WaterIntakeWidget
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -41,15 +55,30 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var database: WaterIntakeDatabase
 
+    @OptIn(DelicateCoroutinesApi::class, FlowPreview::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        database = Room.databaseBuilder(
-            applicationContext, WaterIntakeDatabase::class.java, "water_intake_database"
-        ).build()
+        database = WaterIntakeDatabase.getDatabase(applicationContext)
 
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
 
+
+        GlobalScope.launch(Dispatchers.IO) {
+            waterIntakeRepository.getCurrentIntake().debounce(1).distinctUntilChanged()
+                .collectLatest { intake ->
+                    val glanceIds =
+                        GlanceAppWidgetManager(applicationContext).getGlanceIds(WaterIntakeWidget::class.java)
+                    glanceIds.forEach { id ->
+                        updateAppWidgetState(applicationContext, id) {
+                            it[floatPreferencesKey("goal")] =
+                                loadUserData(applicationContext).dailyWaterGoal
+                            it[floatPreferencesKey("intake")] = intake
+                        }
+                        WaterIntakeWidget().update(applicationContext, id)
+                    }
+                }
+        }
         setContent {
             val navController = rememberNavController()
             val coroutineScope = rememberCoroutineScope()
@@ -66,6 +95,11 @@ class MainActivity : ComponentActivity() {
             }
 
             val animationDuration = 500
+
+            Log.d(
+                "MainActivity",
+                "showInputScreen: $showInputScreen, showAnimation: $showAnimation"
+            )
 
             val navigationEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
                 {
@@ -104,10 +138,12 @@ class MainActivity : ComponentActivity() {
                 }) {
                     Scaffold(topBar = {
                         if (navMode != "input" && navMode != "animation") {
-                            TopNavBar(onMenuClick = {
-                                coroutineScope.launch { drawerState.open() }
-                            }, title = navController.currentBackStackEntry?.destination?.route?.replaceFirstChar { it.uppercase() }
-                                ?: "Home")
+                            TopNavBar(
+                                onMenuClick = {
+                                    coroutineScope.launch { drawerState.open() }
+                                },
+                                title = navController.currentBackStackEntry?.destination?.route?.replaceFirstChar { it.uppercase() }
+                                    ?: "Home")
                         }
                     }) { paddingValues ->
                         NavHost(
@@ -126,9 +162,10 @@ class MainActivity : ComponentActivity() {
                                 SimpleWaterFillAnimationScreen(
                                     context = context, animationDuration = 1500
                                 ) {
-                                    navController.navigate("home") {
-                                        popUpTo(0) { inclusive = true } // Clears all previous destinations
-                                    }
+                                    navigateWithClearBackStack(
+                                        navController,
+                                        if (showInputScreen) "input" else "home"
+                                    )
                                 }
                             }
                             composable(
@@ -139,9 +176,10 @@ class MainActivity : ComponentActivity() {
                                 InitialSetupScreen(
                                     context = context
                                 ) {
-                                    navController.navigate("home") {
-                                        popUpTo(0) { inclusive = true } // Clears all previous destinations
-                                    }
+                                    navigateWithClearBackStack(
+                                        navController,
+                                        "home"
+                                    )
                                 }
                             }
                             composable(
@@ -167,7 +205,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("Settings"){
+                                TodoScreen("Settings") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
@@ -179,7 +217,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("About"){
+                                TodoScreen("About") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
@@ -191,7 +229,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("Donate"){
+                                TodoScreen("Donate") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
