@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.navigation.NavBackStackEntry
@@ -209,7 +208,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("Settings") {
+                                SettingsScreen("Settings") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
@@ -221,7 +220,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("About") {
+                                AboutScreen("About") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
@@ -233,7 +232,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                TodoScreen("Donate") {
+                                DonateScreen("Donate") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"

@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.cardview)
     val composeVersion = "1.5.3"
 
     // Compose dependencies

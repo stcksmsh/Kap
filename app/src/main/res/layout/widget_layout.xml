@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/background"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:background="@drawable/rounded_background"
+    android:padding="8dp">
+
+    <!-- Circular Progress Bar Section -->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+
+        <!-- Progress Circle -->
+        <ProgressBar
+            android:id="@+id/circular_progress_bar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="131dp"
+            android:layout_height="136dp"
+            android:layout_gravity="center"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="70"
+            android:progressDrawable="@drawable/circular_progress_drawable" />
+
+        <!-- Text in the Middle -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/progress_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="500"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1.5dp"
+                android:layout_gravity="center"
+                android:background="@drawable/divider_line" />
+
+            <TextView
+                android:id="@+id/progress_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="200"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Buttons Section -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_background">
+
+                <Button
+                    android:id="@+id/add_intake_button_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="+250ml" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_background">
+
+                <Button
+                    android:id="@+id/add_intake_button_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="+500ml" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_background">
+
+                <Button
+                    android:id="@+id/add_intake_button_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="+750ml" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/rounded_background">
+
+                <Button
+                    android:id="@+id/add_intake_button_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="+1000ml" />
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
