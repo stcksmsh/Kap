@@ -25,6 +25,11 @@ interface WaterIntakeDao {
     )
     fun getTodaysIntake(date: Date = Date()): Flow<Float>
 
+    @Query(
+        "SELECT SUM(intakeAmount) FROM water_intake WHERE DATE(date / 1000, 'unixepoch') = DATE(:date / 1000, 'unixepoch')"
+    )
+    fun getTodaysIntakeValue(date: Date = Date()): Float
+
     @Query("SELECT * FROM water_intake ORDER BY date DESC LIMIT 1")
     fun getLastIntake(): WaterIntake?
 

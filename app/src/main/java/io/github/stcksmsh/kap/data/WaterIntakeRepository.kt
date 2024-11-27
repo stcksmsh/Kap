@@ -33,6 +33,14 @@ class WaterIntakeRepository(private val waterIntakeDao: WaterIntakeDao) {
         )
     }
 
+    fun getCurrentIntakeValue(): Float{
+        return waterIntakeDao.getTodaysIntakeValue()
+    }
+
+    fun getLastWaterIntake(): WaterIntake? {
+        return waterIntakeDao.getLastIntake()
+    }
+
     fun getWaterIntakesBetween(start: Date, end: Date): Flow<List<WaterIntake>> {
         return waterIntakeDao.getIntakesBetweenDates(start, end)
     }

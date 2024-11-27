@@ -14,10 +14,12 @@ import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.provideContent
+import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
 import androidx.glance.currentState
 import androidx.glance.layout.*
@@ -29,7 +31,12 @@ import androidx.glance.unit.ColorProvider
 import io.github.stcksmsh.kap.MainActivity
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
+import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadUserData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Date
 
 class WaterIntakeWidget : GlanceAppWidget() {
@@ -150,22 +157,35 @@ class AddWaterCallback : ActionCallback {
     ) {
         // Extract the amount to add
         val intakeAmount = parameters[KeyAmount] ?: 0f
+        val waterIntakeRepository = WaterIntakeRepository(WaterIntakeDatabase.getDatabase(context.applicationContext).waterIntakeDao())
         if (intakeAmount > 0) {
-            val waterIntakeDatabase = WaterIntakeDatabase.getDatabase(context.applicationContext)
-            waterIntakeDatabase.waterIntakeDao().insert(
+            waterIntakeRepository.insertWaterIntake(
                 WaterIntake(
                     intakeAmount = intakeAmount,
                     date = Date()
                 )
             )
         }else{
-            val waterIntakeDAO = WaterIntakeDatabase.getDatabase(context.applicationContext).waterIntakeDao()
-            waterIntakeDAO.getLastIntake()?.let{
-                waterIntakeDAO.delete(
+            waterIntakeRepository.getLastWaterIntake()?.let{
+                waterIntakeRepository.deleteWaterIntake(
                     it
                 )
             }
         }
+
+        updateWidgets(context.applicationContext, waterIntakeRepository.getCurrentIntakeValue())
+
     }
 }
 
+
+suspend fun updateWidgets(context: Context, intake: Float){
+    GlanceAppWidgetManager(context).getGlanceIds(WaterIntakeWidget::class.java).forEach{ id ->
+        updateAppWidgetState(context, id){
+            it[floatPreferencesKey("goal")] =
+                loadUserData(context).dailyWaterGoal
+            it[floatPreferencesKey("intake")] = intake
+        }
+        WaterIntakeWidget().update(context, id)
+    }
+}

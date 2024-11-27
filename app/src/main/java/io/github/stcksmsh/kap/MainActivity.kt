@@ -34,9 +34,11 @@ import io.github.stcksmsh.kap.data.loadSettingsData
 import io.github.stcksmsh.kap.data.loadUserData
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
+import io.github.stcksmsh.kap.ui.composables.coroutineScope
 import io.github.stcksmsh.kap.ui.screens.*
 import io.github.stcksmsh.kap.ui.theme.MyAppTheme
 import io.github.stcksmsh.kap.widget.WaterIntakeWidget
+import io.github.stcksmsh.kap.widget.updateWidgets
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -66,21 +68,12 @@ class MainActivity : ComponentActivity() {
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
 
 
-        GlobalScope.launch(Dispatchers.IO) {
-            waterIntakeRepository.getCurrentIntake().debounce(1).distinctUntilChanged()
-                .collectLatest { intake ->
-                    val glanceIds =
-                        GlanceAppWidgetManager(applicationContext).getGlanceIds(WaterIntakeWidget::class.java)
-                    glanceIds.forEach { id ->
-                        updateAppWidgetState(applicationContext, id) {
-                            it[floatPreferencesKey("goal")] =
-                                loadUserData(applicationContext).dailyWaterGoal
-                            it[floatPreferencesKey("intake")] = intake
-                        }
-                        WaterIntakeWidget().update(applicationContext, id)
-                    }
-                }
+        coroutineScope.launch{
+            waterIntakeRepository.getCurrentIntake().collectLatest {
+                updateWidgets(applicationContext, it)
+            }
         }
+
         setContent {
             val navController = rememberNavController()
             val coroutineScope = rememberCoroutineScope()
