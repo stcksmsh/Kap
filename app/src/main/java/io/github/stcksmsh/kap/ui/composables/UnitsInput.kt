@@ -57,8 +57,6 @@ fun UnitsInput(
             modifier = Modifier.padding(bottom = 16.dp)
         )
     }
-
-    QuickWaterAdditionVolumesInput()
 }
 
 

@@ -1,12 +1,19 @@
 package io.github.stcksmsh.kap.ui.screens
 
 import android.content.Context
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +23,8 @@ import io.github.stcksmsh.kap.data.loadSettingsData
 import io.github.stcksmsh.kap.data.loadUserData
 import io.github.stcksmsh.kap.data.saveSettingsData
 import io.github.stcksmsh.kap.data.saveUserData
+import io.github.stcksmsh.kap.model.SettingsData
+import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserDataInput
 
@@ -31,13 +40,16 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
     var weightInput by remember { mutableFloatStateOf(userData.weight) }
     var dailyPhysicalActivityInput by remember { mutableIntStateOf(userData.dailyPhysicalActivity) }
     var dailyWaterGoalInput by remember { mutableFloatStateOf(userData.dailyWaterGoal) }
+    var quickWaterAditionVolumesInput by remember { mutableStateOf(settingsData.quickWaterAdditionVolumes) }
+    var startupAnimationEnabledInput by remember { mutableStateOf(settingsData.startupAnimationEnabled) }
 
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         UserDataInput(
             selectedWeightUnit = selectedWeightUnitInput,
@@ -51,12 +63,49 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
             onDailyPhysicalActivityChanged = { dailyPhysicalActivityInput = it },
             onDailyWaterGoalChanged = { dailyWaterGoalInput = it }
         )
+
         UnitsInput(
             selectedWeightUnit = selectedWeightUnitInput,
             selectedVolumeUnit = selectedVolumeUnitInput,
             onSelectedWeightUnitChanged = { selectedWeightUnitInput = it },
             onSelectedVolumeUnitChanged = { selectedVolumeUnitInput = it }
         )
+
+        QuickWaterAdditionVolumesInput(
+            quickWaterAditionVolumesInput = quickWaterAditionVolumesInput,
+            onQuickWaterAditionVolumesChanged = { quickWaterAditionVolumesInput = it }
+        )
+
+//        Row(
+//            modifier = Modifier.align(Alignment.CenterHorizontally),
+////            verticalAlignment = Alignment.CenterVertically
+//            horizontalArrangement = Arrangement.Center
+//        ) {
+        Text(
+            text = "Startup Animation",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier
+                .padding(12.dp)
+                .align(Alignment.CenterHorizontally),
+            color = MaterialTheme.colorScheme.primary,
+        )
+        Row {
+            Text(
+                text = if (startupAnimationEnabledInput) "Enabled" else "Disabled",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.align(
+                    Alignment.CenterVertically
+                ).padding(end = 12.dp)
+            )
+
+            Switch(
+                checked = startupAnimationEnabledInput,
+                onCheckedChange = { startupAnimationEnabledInput = !startupAnimationEnabledInput },
+                modifier = Modifier.padding(start = 12.dp)
+            )
+        }
+//        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -73,9 +122,11 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
                 )
                 saveSettingsData(
                     context = context,
-                    settingsData = settingsData.copy(
+                    settingsData = SettingsData(
+                        startupAnimationEnabled = startupAnimationEnabledInput,
                         weightUnit = selectedWeightUnitInput,
-                        volumeUnit = selectedVolumeUnitInput
+                        volumeUnit = selectedVolumeUnitInput,
+                        quickWaterAdditionVolumes = quickWaterAditionVolumesInput
                     )
                 )
             },
