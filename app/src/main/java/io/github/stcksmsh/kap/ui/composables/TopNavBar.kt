@@ -19,7 +19,6 @@ fun TopNavBar(
         title = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(start = 8.dp)
             )

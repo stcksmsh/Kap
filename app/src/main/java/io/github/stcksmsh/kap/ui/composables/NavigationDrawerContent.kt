@@ -30,7 +30,6 @@ fun NavigationDrawerContent(
         ) {
             Text(
                 text = "Menu",
-                style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -62,7 +61,6 @@ fun NavigationDrawerContent(
                     ) {
                         Text(
                             text = menuItem,
-                            style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 16.dp) // Horizontal padding for text
                         )
@@ -83,8 +81,8 @@ fun NavigationDrawerContent(
             // Footer Section
             Text(
                 text = "© 2024 Kap by Kosta Vukićević",
-                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }

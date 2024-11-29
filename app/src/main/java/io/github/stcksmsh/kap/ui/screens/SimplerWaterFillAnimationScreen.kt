@@ -1,10 +1,8 @@
 package io.github.stcksmsh.kap.ui.screens
 
 import android.content.Context
-import android.content.res.Resources
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationEndReason
-import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -23,12 +21,17 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.stcksmsh.kap.ui.theme.Typography
+import io.github.stcksmsh.kap.ui.theme.AppTypography
 import kotlin.math.PI
 import kotlin.math.sin
 
 @Composable
-fun SimpleWaterFillAnimationScreen(context: Context, modifier: Modifier = Modifier, animationDuration: Int = 2500, onAnimationEnd: () -> Unit = {}) {
+fun SimpleWaterFillAnimationScreen(
+    context: Context,
+    modifier: Modifier = Modifier,
+    animationDuration: Int = 2500,
+    onAnimationEnd: () -> Unit = {}
+) {
     val waterLevel = remember { Animatable(0f) }
 
 
@@ -90,7 +93,7 @@ fun SimpleWaterFillAnimationScreen(context: Context, modifier: Modifier = Modifi
             Text(
                 text = appName,
                 color = backgroundColor, // Same as background initially
-                style = Typography.displayLarge.copy(
+                style = AppTypography.displayLarge.copy(
                     letterSpacing = 5.sp,
                 )
             )

@@ -29,7 +29,7 @@ fun hasUserData(context: Context): Boolean {
     return sharedPreferences.contains("age")  // Check if age or other data exists
 }
 
-fun calculateOptimalWaterIntake(age: Int, weight: Float, dailyPhysicalActivity: Int): Float{
+fun calculateOptimalWaterIntake(age: Int, weight: Float, dailyPhysicalActivity: Int): Float {
     val ageBasedWaterIntake = when {
         age < 18 -> 200
         age < 55 -> 0

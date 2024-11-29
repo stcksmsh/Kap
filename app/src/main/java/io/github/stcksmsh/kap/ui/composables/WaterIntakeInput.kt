@@ -1,8 +1,6 @@
 package io.github.stcksmsh.kap.ui.composables
 
 import android.content.Context
-import androidx.annotation.Discouraged
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +8,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -21,7 +18,6 @@ import io.github.stcksmsh.kap.data.loadSettingsData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
 
 val coroutineScope = CoroutineScope(Dispatchers.IO)
 
@@ -41,8 +37,7 @@ fun WaterIntakeInput(
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
         modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize(),
         contentPadding = PaddingValues(1.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -56,8 +51,7 @@ fun WaterIntakeInput(
                         coroutineScope.launch {
                             waterIntakeRepository.insertWaterIntake(
                                 WaterIntake(
-                                    intakeAmount = volume,
-                                    date = Date()
+                                    intakeAmount = volume
                                 )
                             )
                         }

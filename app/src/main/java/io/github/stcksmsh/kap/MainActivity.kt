@@ -12,16 +12,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -31,21 +27,12 @@ import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserData
 import io.github.stcksmsh.kap.data.loadSettingsData
-import io.github.stcksmsh.kap.data.loadUserData
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
-import io.github.stcksmsh.kap.ui.composables.coroutineScope
 import io.github.stcksmsh.kap.ui.screens.*
-import io.github.stcksmsh.kap.ui.theme.MyAppTheme
-import io.github.stcksmsh.kap.widget.WaterIntakeWidget
-import io.github.stcksmsh.kap.widget.updateWidgets
+import io.github.stcksmsh.kap.ui.theme.AppTheme
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -66,13 +53,6 @@ class MainActivity : ComponentActivity() {
         database = WaterIntakeDatabase.getDatabase(applicationContext)
 
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
-
-
-        coroutineScope.launch{
-            waterIntakeRepository.getCurrentIntake().collectLatest {
-                updateWidgets(applicationContext, it)
-            }
-        }
 
         setContent {
             val navController = rememberNavController()
@@ -113,7 +93,7 @@ class MainActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(DrawerValue.Closed)
 
-            MyAppTheme {
+            AppTheme {
                 // Observe current backstack entry for determining navMode
                 val currentBackStackEntry =
                     navController.currentBackStackEntryFlow.collectAsState(null)
@@ -147,7 +127,6 @@ class MainActivity : ComponentActivity() {
                             startDestination = startDestination,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.background)
                                 .padding(paddingValues)
                         ) {
                             composable(
@@ -171,7 +150,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 InitialSetupScreen(
                                     context = context
-                                ) {
+                                ){
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"
@@ -201,12 +180,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                SettingsScreen("Settings") {
-                                    navigateWithClearBackStack(
-                                        navController,
-                                        "home"
-                                    )
-                                }
+                                SettingsScreen(context)
                             }
                             composable(
                                 route = "about",
@@ -239,9 +213,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun navigateWithClearBackStack(navController: NavController, route: String) {
-        navController.navigate(route) {
-            popUpTo(0) { inclusive = true } // Clears all destinations before navigating
-        }
+}
+
+fun navigateWithClearBackStack(navController: NavController, route: String) {
+    navController.navigate(route) {
+        popUpTo(0) { inclusive = true } // Clears all destinations before navigating
     }
 }

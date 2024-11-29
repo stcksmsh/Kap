@@ -33,7 +33,7 @@ class WaterIntakeRepository(private val waterIntakeDao: WaterIntakeDao) {
         )
     }
 
-    fun getCurrentIntakeValue(): Float{
+    fun getCurrentIntakeValue(): Float {
         return waterIntakeDao.getTodaysIntakeValue()
     }
 

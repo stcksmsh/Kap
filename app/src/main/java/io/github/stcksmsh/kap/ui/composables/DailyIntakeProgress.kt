@@ -25,8 +25,6 @@ fun DailyIntakeProgress(
         // Display daily target
         Text(
             text = "Daily Goal: ${volumeUnit.convertMillisToString(dailyGoalMillis)} ${volumeUnit.symbol}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -34,8 +32,6 @@ fun DailyIntakeProgress(
         // Display current intake
         Text(
             text = "Current Intake: ${volumeUnit.convertMillisToString(currentIntakeMillis)} ${volumeUnit.symbol}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -50,7 +46,8 @@ fun DailyIntakeProgress(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = MaterialTheme.shapes.medium
                 ),
-        ) {
+
+            ) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -65,8 +62,6 @@ fun DailyIntakeProgress(
         // Percentage Text Below Progress Bar
         Text(
             text = "${(progress * 100).toInt()}% of Goal Achieved",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )

@@ -1,7 +1,6 @@
 package io.github.stcksmsh.kap.ui.screens
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -87,8 +86,9 @@ fun getDateRangeForFilter(filter: String): Pair<Date, Date> {
 // Sample implementation of the graph
 @Composable
 fun WaterIntakeGraph(data: List<WaterIntake>) {
-    val dailyIntakes: Map<String, Float> = data.groupBy { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.date) }
-        .mapValues { entry -> entry.value.sumOf { it.intakeAmount.toDouble() }.toFloat() }
+    val dailyIntakes: Map<String, Float> =
+        data.groupBy { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(it.date) }
+            .mapValues { entry -> entry.value.sumOf { it.intakeAmount.toDouble() }.toFloat() }
 
     val dates = dailyIntakes.keys.sorted()
     val intakes = dates.map { dailyIntakes[it] ?: 0f }
@@ -99,7 +99,6 @@ fun WaterIntakeGraph(data: List<WaterIntake>) {
     ) {
         Text(
             text = "Daily Water Intake",
-            style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -109,7 +108,6 @@ fun WaterIntakeGraph(data: List<WaterIntake>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(200.dp)
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.1f))
         ) {
             Text("Graph Placeholder", Modifier.align(Alignment.Center))
         }

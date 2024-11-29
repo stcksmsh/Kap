@@ -2,13 +2,11 @@ package io.github.stcksmsh.kap.ui.screens
 
 
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,8 +28,7 @@ fun HomeScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Display the daily target, current intake, and progress bar
@@ -49,7 +46,6 @@ fun HomeScreen(
         )
 
         HorizontalDivider(
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             thickness = 0.5.dp,
             modifier = Modifier.padding(horizontal = 16.dp)
         )

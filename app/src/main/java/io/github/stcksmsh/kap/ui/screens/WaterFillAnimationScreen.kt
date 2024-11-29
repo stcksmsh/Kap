@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -87,12 +86,17 @@ fun WaterFillAnimationScreen(modifier: Modifier = Modifier, onAnimationEnd: () -
     }
 }
 
-data class Bubble(val x: Float, val radius: Float, val duration: Int, val progress: Animatable<Float, AnimationVector1D>)
+data class Bubble(
+    val x: Float,
+    val radius: Float,
+    val duration: Int,
+    val progress: Animatable<Float, AnimationVector1D>
+)
 
 fun generateBubbles(): List<Bubble> {
     return List(200) {
         Bubble(
-            x = 1 - Random.nextFloat() *  2,
+            x = 1 - Random.nextFloat() * 2,
             radius = Random.nextFloat() * 20 + 7,
             duration = Random.nextInt(2000, 4000),
             progress = Animatable(0f)
@@ -101,7 +105,12 @@ fun generateBubbles(): List<Bubble> {
 }
 
 // Draw water with a wavy surface
-fun DrawScope.drawWavyWater(level: Float, screenHeight: Float, screenWidth: Float, waveOffset: Float) {
+fun DrawScope.drawWavyWater(
+    level: Float,
+    screenHeight: Float,
+    screenWidth: Float,
+    waveOffset: Float
+) {
     val amplitude = 20.dp.toPx() // Wave height
     val waterHeight = screenHeight * level + amplitude
     val path = Path().apply {
@@ -131,9 +140,13 @@ fun DrawScope.drawWavyWater(level: Float, screenHeight: Float, screenWidth: Floa
 }
 
 // Draw a bubble that moves from the bottom to the top of the screen
-fun DrawScope.drawBubble(bubble: Bubble, screenHeight: Float, waterLevel: Animatable<Float, AnimationVector1D>) {
+fun DrawScope.drawBubble(
+    bubble: Bubble,
+    screenHeight: Float,
+    waterLevel: Animatable<Float, AnimationVector1D>
+) {
     // yOffset starts at screenHeight (bottom of the screen) and moves to 0f (top of the screen)
-    if(bubble.progress.value == 0f || bubble.progress.value > waterLevel.value) return
+    if (bubble.progress.value == 0f || bubble.progress.value > waterLevel.value) return
 
     var bubbleYOffset = screenHeight * (0.5f - bubble.progress.value)
 

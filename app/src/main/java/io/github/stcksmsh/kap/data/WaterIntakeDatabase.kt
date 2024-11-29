@@ -13,6 +13,7 @@ abstract class WaterIntakeDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "water_intake_database"
+
         @Volatile
         private var INSTANCE: WaterIntakeDatabase? = null
 

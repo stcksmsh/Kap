@@ -12,16 +12,16 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import kotlinx.coroutines.launch
@@ -56,7 +56,7 @@ fun WaterIntakeList(
                 }
             }
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f),
                 thickness = 1.dp,
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
