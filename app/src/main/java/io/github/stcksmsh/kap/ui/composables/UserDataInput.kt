@@ -1,6 +1,5 @@
 package io.github.stcksmsh.kap.ui.composables
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -28,39 +27,42 @@ fun UserDataInput(
     modifier: Modifier = Modifier
 ) {
 
-    Log.d(
-        "UserDataInput",
-        "Rendering UserDataInput: $age, $weight, $dailyPhysicalActivity, $dailyWaterGoal"
-    )
-
     // Remember and initialize states for user input fields
     val ageString = if (age > 0) age.toString() else ""
 
-    val weightString = if (weight > 0f) selectedWeightUnit.convertKilosToString(weight) else ""
+    val weightString = remember(selectedWeightUnit, weight) {
+        mutableStateOf(
+            if (weight > 0f) selectedWeightUnit.convertKilosToString(weight)
+            else ""
+        )
+    }
 
     val dailyPhysicalActivityString =
         if (dailyPhysicalActivity >= 0) dailyPhysicalActivity.toString() else ""
 
-    val dailyWaterGoalString = if (dailyWaterGoal > 0f) selectedVolumeUnit.convertMillisToString(
-        dailyWaterGoal
-    ) else ""
+    val dailyWaterGoalString = remember(selectedVolumeUnit, dailyWaterGoal) {
+        mutableStateOf(
+            if (dailyWaterGoal > 0f) selectedVolumeUnit.convertMillisToString(dailyWaterGoal)
+            else ""
+        )
+    }
 
     var isDailyWaterGoalManuallySet by remember { mutableStateOf(false) }
 
     // Validation checks
-    val isAgeError = age !in 0..150
+    val isAgeError = ageString.toIntOrNull()?.let { it < 0 || it > 120 } != false
     val isWeightError =
-        weightString.toFloatOrNull()?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } == true
+        weightString.value.toFloatOrNull()
+            ?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } != false
     val isDailyPhysicalActivityError =
-        dailyPhysicalActivityString.toFloatOrNull()?.let { it < 0f || it > 300f } == true
-    val isDailyWaterGoalError = dailyWaterGoalString.toFloatOrNull()
-        ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } == true
+        dailyPhysicalActivityString.toIntOrNull()?.let { it < 0 || it > 300 } != false
+    val isDailyWaterGoalError = dailyWaterGoalString.value.toFloatOrNull()
+        ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } != false
 
     // Trigger calculation when weight, age, or daily activity changes, if not manually set
     LaunchedEffect(age, weight, dailyPhysicalActivity, isDailyWaterGoalManuallySet) {
         if (!isDailyWaterGoalManuallySet) {
-            Log.d("UserDataInput", "Recalculating daily water goal")
-            if (ageString == "" || weightString == "" || dailyPhysicalActivityString == "") return@LaunchedEffect
+            if (ageString == "" || weightString.value == "" || dailyPhysicalActivityString == "") return@LaunchedEffect
             onDailyWaterGoalChanged(
                 calculateOptimalWaterIntake(
                     age = age, weight = weight, dailyPhysicalActivity = dailyPhysicalActivity
@@ -88,7 +90,14 @@ fun UserDataInput(
             TextField(
                 value = ageString,
                 onValueChange = {
-                    onAgeChanged(it.toIntOrNull() ?: 0)
+                    onValueChange(
+                        it,
+                        0
+                    ) {
+                        it.toIntOrNull()?.let {
+                            onAgeChanged(it)
+                        }
+                    }
                 },
                 label = {
                     Text(
@@ -101,11 +110,17 @@ fun UserDataInput(
             )
 
             TextField(
-                value = weightString,
+                value = weightString.value,
                 onValueChange = {
-                    onWeightChanged(
-                        it.toFloatOrNull()?.times(selectedWeightUnit.kgs) ?: 0f
-                    )
+                    onValueChange(
+                        it,
+                        selectedWeightUnit.decimals
+                    ) {
+                        weightString.value = it
+                        selectedWeightUnit.convertStringToKilos(it)?.let {
+                            onWeightChanged(it)
+                        }
+                    }
                 },
                 label = {
                     Text(
@@ -122,7 +137,14 @@ fun UserDataInput(
             TextField(
                 value = dailyPhysicalActivityString,
                 onValueChange = {
-                    onDailyPhysicalActivityChanged(it.toIntOrNull() ?: 0)
+                    onValueChange(
+                        it,
+                        0
+                    ) {
+                        it.toIntOrNull()?.let {
+                            onDailyPhysicalActivityChanged(it)
+                        }
+                    }
                 },
                 label = {
                     Text(
@@ -135,12 +157,18 @@ fun UserDataInput(
             )
 
             TextField(
-                value = dailyWaterGoalString,
+                value = dailyWaterGoalString.value,
                 onValueChange = {
-                    isDailyWaterGoalManuallySet = true
-                    onDailyWaterGoalChanged(
-                        it.toFloatOrNull()?.times(selectedVolumeUnit.milliliters) ?: 0f
-                    )
+                    onValueChange(
+                        it,
+                        selectedVolumeUnit.decimals
+                    ) {
+                        isDailyWaterGoalManuallySet = true
+                        dailyWaterGoalString.value = it
+                        selectedVolumeUnit.convertStringToMillis(it)?.let {
+                            onDailyWaterGoalChanged(it)
+                        }
+                    }
                 },
                 label = {
                     Text(
@@ -155,11 +183,30 @@ fun UserDataInput(
             Button(
                 onClick = {
                     isDailyWaterGoalManuallySet = false // Reset to automatic calculation
-                },
-                modifier = Modifier.padding(bottom = 16.dp).align(Alignment.CenterHorizontally)
+                }, modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .align(Alignment.CenterHorizontally)
             ) {
                 Text("Calculate")
             }
         }
     }
+}
+
+
+fun onValueChange(
+    newValue: String,
+    decimalPlaces: Int,
+    onValueChange: (String) -> Unit,
+) {
+    // Check if the input is valid
+    val isValidInput = if (decimalPlaces == 0) {
+        newValue.all { it.isDigit() }
+    } else {
+        newValue.count { it == '.' } <= 1 && newValue.all { it.isDigit() || it == '.' }
+    }
+
+    if (!isValidInput) return
+
+    onValueChange(newValue)
 }

@@ -11,7 +11,7 @@ enum class WeightUnits(
 ) {
     KGS("kg", 1.0f, 0, "kilograms"),
     POUNDS("lbs", 0.453592f, 0, "pounds"),
-    STONES("st", 6.35029f, 0, "stones");
+    STONES("st", 6.35029f, 1, "stones");
 
     fun convertKilosToString(value: Float): String {
         val scaledValue = value / kgs
@@ -19,6 +19,11 @@ enum class WeightUnits(
             BigDecimal(scaledValue.toDouble()).setScale(decimals, RoundingMode.HALF_UP)
         return roundedValue.stripTrailingZeros().toPlainString()
     }
+
+    fun convertStringToKilos(value: String): Float? {
+        return value.toFloatOrNull()?.times(kgs)
+    }
+
 }
 
 enum class VolumeUnits(
@@ -40,6 +45,11 @@ enum class VolumeUnits(
             BigDecimal(scaledValue.toDouble()).setScale(decimals, RoundingMode.HALF_UP)
         return roundedValue.stripTrailingZeros().toPlainString()
     }
+
+    fun convertStringToMillis(value: String): Float? {
+        return value.toFloatOrNull()?.times(milliliters)
+    }
+
 }
 
 data class SettingsData(
