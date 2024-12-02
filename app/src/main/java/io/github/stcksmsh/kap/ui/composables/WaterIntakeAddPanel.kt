@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap.ui.composables
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,6 +24,8 @@ import io.github.stcksmsh.kap.model.SettingsData
 import io.github.stcksmsh.kap.model.VolumeUnits
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.Date
 
 @Composable
 fun WaterIntakeAddPanel(

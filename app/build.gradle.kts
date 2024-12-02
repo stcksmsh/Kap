@@ -56,6 +56,13 @@ dependencies {
     implementation(libs.androidx.glance.appwidget)
     implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.work.runtime.ktx)
+
+    // Vico chart library
+    implementation(libs.vico.compose)
+    implementation(libs.vico.compose.m3)
+    implementation(libs.vico.core)
+    implementation(libs.vico.views)
+
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
 

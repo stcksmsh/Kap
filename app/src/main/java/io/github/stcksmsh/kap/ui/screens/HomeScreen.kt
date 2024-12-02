@@ -44,15 +44,5 @@ fun HomeScreen(
             waterIntakeRepository = waterIntakeRepository,
             modifier = Modifier.weight(1f)
         )
-
-        HorizontalDivider(
-            thickness = 0.5.dp,
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
-
-        WaterIntakeList(
-            waterIntakeRepository = waterIntakeRepository,
-            modifier = Modifier.weight(3f)
-        )
     }
 }
