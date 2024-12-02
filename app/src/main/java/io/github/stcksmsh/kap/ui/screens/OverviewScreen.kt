@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
+import io.github.stcksmsh.kap.data.loadSettingsData
 import io.github.stcksmsh.kap.data.loadUserData
 import io.github.stcksmsh.kap.ui.composables.WaterIntakeList
 import java.text.SimpleDateFormat
@@ -40,6 +41,8 @@ fun OverviewScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
     var selectedFilter by remember { mutableStateOf("Last Week") }
 
     val userData = loadUserData(context)
+
+    val settingsData = loadSettingsData(context)
 
     // Fetch water intake data based on the selected filter
     val startAndEndDate by remember { derivedStateOf { getDateRangeForFilter(selectedFilter) } }
@@ -97,6 +100,7 @@ fun OverviewScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
 
         // Water Intake List
         WaterIntakeList(
+            selectedVolumeUnit = settingsData.volumeUnit,
             waterIntakeRepository = waterIntakeRepository,
             modifier = Modifier.weight(1f)
         )

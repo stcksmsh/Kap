@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap.ui.composables
 
+import android.health.connect.datatypes.units.Volume
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,22 +9,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
+import io.github.stcksmsh.kap.model.VolumeUnits
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
@@ -32,41 +35,45 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun WaterIntakeList(
+    selectedVolumeUnit: VolumeUnits,
     waterIntakeRepository: WaterIntakeRepository,
     enableDelete: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val allWaterIntakes by waterIntakeRepository.allIntakes.collectAsState()
+    val pager = remember {
+        Pager(PagingConfig(pageSize = 20)) {
+            waterIntakeRepository.getPagedIntakes()
+        }
+    }
+
+    val waterIntakes: LazyPagingItems<WaterIntake> = pager.flow.collectAsLazyPagingItems()
+
+
     LazyColumn(
         modifier = modifier
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        items(allWaterIntakes) { waterIntake ->
-            WaterIntakeRow(
-                waterIntake = waterIntake,
-                enableDelete = enableDelete,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            ) {
-                coroutineScope.launch {
-                    waterIntakeRepository.deleteWaterIntake(waterIntake)
-                }
+        items(waterIntakes.itemSnapshotList){ waterIntake ->
+            waterIntake?.let {
+                WaterIntakeRow(
+                    selectedVolumeUnit = selectedVolumeUnit,
+                    waterIntake = it,
+                    enableDelete = enableDelete,
+                    onDelete = {
+                        coroutineScope.launch{
+                            waterIntakeRepository.deleteWaterIntake(it)
+                        }
+                    }
+                )
             }
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.25f),
-                thickness = 1.dp,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
         }
     }
 }
 
-
 @Composable
 private fun WaterIntakeRow(
+    selectedVolumeUnit: VolumeUnits,
     waterIntake: WaterIntake,
     enableDelete: Boolean,
     modifier: Modifier = Modifier,
@@ -80,7 +87,7 @@ private fun WaterIntakeRow(
     ) {
         // Water intake amount
         Text(
-            text = "${waterIntake.intakeAmount} ml",
+            text = "${selectedVolumeUnit.convertMillisToString(waterIntake.intakeAmount)} ${selectedVolumeUnit.symbol}",
             fontSize = 18.sp,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.weight(2f),

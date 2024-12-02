@@ -57,6 +57,9 @@ dependencies {
     implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.work.runtime.ktx)
 
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.paging.compose)
     // Vico chart library
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
@@ -68,13 +71,15 @@ dependencies {
 
     // Room dependencies
     val roomVersion = "2.5.2" // Replace with the latest Room version
-    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation(libs.androidx.room.runtime)
+    implementation("androidx.room:room-paging:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-paging:$roomVersion")
 
     // Optional - for Kotlin coroutines support
-    implementation("androidx.room:room-ktx:$roomVersion")
+    implementation(libs.androidx.room.ktx)
 
     // Testing dependencies
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
 }

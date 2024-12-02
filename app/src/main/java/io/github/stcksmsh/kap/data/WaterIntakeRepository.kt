@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap.data
 
+import androidx.paging.PagingSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,11 +14,9 @@ class WaterIntakeRepository(private val waterIntakeDao: WaterIntakeDao) {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    val allIntakes: StateFlow<List<WaterIntake>> = waterIntakeDao.getAllIntakes().stateIn(
-        scope = coroutineScope,
-        started = SharingStarted.Eagerly,
-        initialValue = emptyList()
-    )
+    fun getPagedIntakes(): PagingSource<Int, WaterIntake>{
+        return waterIntakeDao.getPagedIntakes()
+    }
 
     suspend fun insertWaterIntake(waterIntake: WaterIntake) {
         withContext(Dispatchers.IO) {

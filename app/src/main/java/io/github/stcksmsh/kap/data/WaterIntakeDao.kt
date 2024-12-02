@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap.data
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -15,7 +16,7 @@ interface WaterIntakeDao {
     suspend fun insert(waterIntake: WaterIntake)
 
     @Query("SELECT * FROM water_intake ORDER BY date DESC")
-    fun getAllIntakes(): Flow<List<WaterIntake>>
+    fun getPagedIntakes(): PagingSource<Int, WaterIntake>
 
     @Query("SELECT * FROM water_intake WHERE date BETWEEN :startDate AND :endDate ORDER BY date DESC")
     fun getIntakesBetweenDates(startDate: Date, endDate: Date): Flow<List<WaterIntake>>
