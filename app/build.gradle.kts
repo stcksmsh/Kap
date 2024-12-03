@@ -9,9 +9,11 @@ android {
     namespace = "io.github.stcksmsh.kap"
     compileSdk = 35
 
+    android.buildFeatures.buildConfig = true
+
     defaultConfig {
         applicationId = "io.github.stcksmsh.kap"
-        minSdk = 31
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -53,8 +55,6 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
     implementation("androidx.compose.runtime:runtime:$composeVersion")
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
     implementation(libs.androidx.work.runtime.ktx)
 
     implementation(libs.androidx.paging.compose)

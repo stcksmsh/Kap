@@ -1,6 +1,7 @@
 package io.github.stcksmsh.kap.ui.composables
 
-import android.util.Log
+import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,17 +21,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
-import io.github.stcksmsh.kap.model.SettingsData
+import io.github.stcksmsh.kap.model.AppSettings
 import io.github.stcksmsh.kap.model.VolumeUnits
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Date
 
 @Composable
 fun WaterIntakeAddPanel(
     modifier: Modifier = Modifier,
-    settingsData: SettingsData,
+    appSettings: AppSettings,
     waterIntakeRepository: WaterIntakeRepository,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -58,11 +57,11 @@ fun WaterIntakeAddPanel(
                                 .fillMaxWidth(),
                             waterIntakeRepository = waterIntakeRepository,
                             coroutineScope = coroutineScope,
-                            selectedVolumeUnits = settingsData.volumeUnit
+                            selectedVolumeUnits = appSettings.volumeUnit,
                         )
                     } else {
                         // Regular water intake buttons
-                        val waterAmount = settingsData.quickWaterAdditionVolumes[buttonIndex]
+                        val waterAmount = appSettings.quickWaterAdditionVolumes[buttonIndex]
                         WaterIntakeAddButton(
                             modifier = Modifier
                                 .weight(1f)
@@ -70,7 +69,7 @@ fun WaterIntakeAddPanel(
                             waterAmount = waterAmount,
                             waterIntakeRepository = waterIntakeRepository,
                             coroutineScope = coroutineScope,
-                            selectedVolumeUnits = settingsData.volumeUnit
+                            selectedVolumeUnits = appSettings.volumeUnit
                         )
                     }
                 }
@@ -111,14 +110,15 @@ private fun CustomWaterIntakeAddButton(
     modifier: Modifier = Modifier,
     waterIntakeRepository: WaterIntakeRepository,
     coroutineScope: CoroutineScope,
-    selectedVolumeUnits: VolumeUnits
+    selectedVolumeUnits: VolumeUnits,
 ) {
     // State to manage the visibility of the dialog
     var showDialog by remember { mutableStateOf(false) }
 
     // Button to trigger the dialog
     Button(
-        onClick = { showDialog = true },
+        onClick = {
+            showDialog = true },
         modifier = modifier
     ) {
         Text(

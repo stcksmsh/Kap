@@ -18,18 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.loadSettingsData
-import io.github.stcksmsh.kap.data.loadUserData
+import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.data.saveSettingsData
-import io.github.stcksmsh.kap.data.saveUserData
-import io.github.stcksmsh.kap.model.SettingsData
+import io.github.stcksmsh.kap.data.saveUserSettings
+import io.github.stcksmsh.kap.model.AppSettings
 import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
-import io.github.stcksmsh.kap.ui.composables.UserDataInput
+import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
 
 @Composable
 fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
 
-    val userData = loadUserData(context)
+    val userData = loadUserSettings(context)
     val settingsData = loadSettingsData(context)
 
     var selectedWeightUnitInput by remember { mutableStateOf(settingsData.weightUnit) }
@@ -49,7 +49,7 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        UserDataInput(selectedWeightUnit = selectedWeightUnitInput,
+        UserSettingsInput(selectedWeightUnit = selectedWeightUnitInput,
             selectedVolumeUnit = selectedVolumeUnitInput,
             age = ageInput,
             weight = weightInput,
@@ -104,9 +104,9 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-                saveUserData(
+                saveUserSettings(
                     context = context,
-                    userData = userData.copy(
+                    userSettings = userData.copy(
                         age = ageInput,
                         weight = weightInput,
                         dailyPhysicalActivity = dailyPhysicalActivityInput,
@@ -114,7 +114,7 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
                     ),
                 )
                 saveSettingsData(
-                    context = context, settingsData = SettingsData(
+                    context = context, appSettings = AppSettings(
                         startupAnimationEnabled = startupAnimationEnabledInput,
                         weightUnit = selectedWeightUnitInput,
                         volumeUnit = selectedVolumeUnitInput,

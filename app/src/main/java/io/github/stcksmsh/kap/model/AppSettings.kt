@@ -52,7 +52,7 @@ enum class VolumeUnits(
 
 }
 
-data class SettingsData(
+data class AppSettings(
     val startupAnimationEnabled: Boolean,
     val weightUnit: WeightUnits,
     val volumeUnit: VolumeUnits,

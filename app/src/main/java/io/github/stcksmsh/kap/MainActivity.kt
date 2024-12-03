@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap
 
+import android.app.NotificationManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -15,6 +16,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -25,8 +27,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
-import io.github.stcksmsh.kap.data.hasUserData
+import io.github.stcksmsh.kap.data.hasUserSettings
+import io.github.stcksmsh.kap.data.loadReminderSettings
 import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.notifications.NotificationHelper
+import io.github.stcksmsh.kap.notifications.ReminderScheduler
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
@@ -50,6 +55,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
         database = WaterIntakeDatabase.getDatabase(applicationContext)
 
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
@@ -59,7 +65,7 @@ class MainActivity : ComponentActivity() {
             val coroutineScope = rememberCoroutineScope()
 
             val settingsData = loadSettingsData(this)
-            val showInputScreen = !hasUserData(this)
+            val showInputScreen = !hasUserSettings(this)
             val fromWidget = intent.getBooleanExtra(KEY_FROM_WIDGET, false)
             val showAnimation = settingsData.startupAnimationEnabled && !fromWidget
             val context = this
@@ -71,11 +77,6 @@ class MainActivity : ComponentActivity() {
             }
 
             val animationDuration = 500
-
-            Log.d(
-                "MainActivity",
-                "showInputScreen: $showInputScreen, showAnimation: $showAnimation"
-            )
 
             val navigationEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
                 {
@@ -167,11 +168,11 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             composable(
-                                route = "overview",
+                                route = "insights",
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                OverviewScreen(
+                                InsightsScreen(
                                     context = context, waterIntakeRepository = waterIntakeRepository
                                 )
                             }
@@ -183,23 +184,18 @@ class MainActivity : ComponentActivity() {
                                 SettingsScreen(context)
                             }
                             composable(
-                                route = "about",
+                                route = "reminders",
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                AboutScreen("About") {
-                                    navigateWithClearBackStack(
-                                        navController,
-                                        "home"
-                                    )
-                                }
+                                RemindersScreen(context = context)
                             }
                             composable(
-                                route = "donate",
+                                route = "support me",
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                DonateScreen("Donate") {
+                                SupportScreen("Support me") {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"

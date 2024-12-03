@@ -49,7 +49,7 @@ fun NavigationDrawerContent(
             verticalArrangement = Arrangement.spacedBy(12.dp), // Consistent spacing
             horizontalAlignment = Alignment.Start
         ) {
-            val menuItems = listOf("Home", "Overview", "Settings", "About", "Donate")
+            val menuItems = listOf("Home", "Insights", "Settings", "Reminders", "Support me")
             menuItems.forEachIndexed { index, menuItem ->
                 Column {
                     // Menu Item

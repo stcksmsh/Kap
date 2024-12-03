@@ -1,22 +1,22 @@
 package io.github.stcksmsh.kap.data
 
 import android.content.Context
-import io.github.stcksmsh.kap.model.UserData
+import io.github.stcksmsh.kap.model.UserSettings
 
-fun saveUserData(context: Context, userData: UserData) {
+fun saveUserSettings(context: Context, userSettings: UserSettings) {
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     with(sharedPreferences.edit()) {
-        putInt("age", userData.age)
-        putFloat("weight", userData.weight)
-        putInt("dailyPhysicalActivityDuration", userData.dailyPhysicalActivity)
-        putFloat("dalyWaterGoal", userData.dailyWaterGoal)
+        putInt("age", userSettings.age)
+        putFloat("weight", userSettings.weight)
+        putInt("dailyPhysicalActivityDuration", userSettings.dailyPhysicalActivity)
+        putFloat("dalyWaterGoal", userSettings.dailyWaterGoal)
         apply()
     }
 }
 
-fun loadUserData(context: Context): UserData {
+fun loadUserSettings(context: Context): UserSettings {
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    return UserData(
+    return UserSettings(
         age = sharedPreferences.getInt("age", 0),
         weight = sharedPreferences.getFloat("weight", 0f),
         dailyPhysicalActivity = sharedPreferences.getInt("dailyPhysicalActivityDuration", -1),
@@ -24,7 +24,7 @@ fun loadUserData(context: Context): UserData {
     )
 }
 
-fun hasUserData(context: Context): Boolean {
+fun hasUserSettings(context: Context): Boolean {
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     return sharedPreferences.contains("age")  // Check if age or other data exists
 }

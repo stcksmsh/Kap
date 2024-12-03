@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.loadSettingsData
-import io.github.stcksmsh.kap.data.loadUserData
+import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.data.saveSettingsData
-import io.github.stcksmsh.kap.data.saveUserData
+import io.github.stcksmsh.kap.data.saveUserSettings
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
-import io.github.stcksmsh.kap.ui.composables.UserDataInput
+import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
 
 @Composable
 fun InitialSetupScreen(
@@ -31,7 +31,7 @@ fun InitialSetupScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        val userData = loadUserData(context)
+        val userData = loadUserSettings(context)
         val settingsData = loadSettingsData(context)
 
         var selectedWeightUnitInput by remember { mutableStateOf(settingsData.weightUnit) }
@@ -42,7 +42,7 @@ fun InitialSetupScreen(
         var dailyWaterGoalInput by remember { mutableFloatStateOf(userData.dailyWaterGoal) }
 
 
-        UserDataInput(
+        UserSettingsInput(
             selectedWeightUnit = selectedWeightUnitInput,
             selectedVolumeUnit = selectedVolumeUnitInput,
             age = ageInput,
@@ -69,9 +69,9 @@ fun InitialSetupScreen(
 
         Button(
             onClick = {
-                saveUserData(
+                saveUserSettings(
                     context = context,
-                    userData = userData.copy(
+                    userSettings = userData.copy(
                         age = ageInput,
                         weight = weightInput,
                         dailyPhysicalActivity = dailyPhysicalActivityInput,
@@ -80,7 +80,7 @@ fun InitialSetupScreen(
                 )
                 saveSettingsData(
                     context = context,
-                    settingsData = settingsData.copy(
+                    appSettings = settingsData.copy(
                         weightUnit = selectedWeightUnitInput,
                         volumeUnit = selectedVolumeUnitInput
                     )

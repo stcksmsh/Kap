@@ -13,7 +13,7 @@ import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.model.WeightUnits
 
 @Composable
-fun UserDataInput(
+fun UserSettingsInput(
     selectedWeightUnit: WeightUnits,
     selectedVolumeUnit: VolumeUnits,
     age: Int,
@@ -50,14 +50,18 @@ fun UserDataInput(
     var isDailyWaterGoalManuallySet by remember { mutableStateOf(false) }
 
     // Validation checks
-    val isAgeError = ageString.toIntOrNull()?.let { it < 0 || it > 120 } != false
+    val isAgeError =
+        (ageString.toIntOrNull()?.let { it < 0 || it > 120 } != false) && !ageString.isEmpty()
+
     val isWeightError =
-        weightString.value.toFloatOrNull()
-            ?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } != false
+        (weightString.value.toFloatOrNull()
+            ?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } != false) && !weightString.value.isEmpty()
+
     val isDailyPhysicalActivityError =
-        dailyPhysicalActivityString.toIntOrNull()?.let { it < 0 || it > 300 } != false
-    val isDailyWaterGoalError = dailyWaterGoalString.value.toFloatOrNull()
-        ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } != false
+        (dailyPhysicalActivityString.toIntOrNull()?.let { it < 0 || it > 300 } != false) && !dailyPhysicalActivityString.isEmpty()
+
+    val isDailyWaterGoalError = (dailyWaterGoalString.value.toFloatOrNull()
+        ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } != false) && !dailyPhysicalActivityString.isEmpty()
 
     // Trigger calculation when weight, age, or daily activity changes, if not manually set
     LaunchedEffect(age, weight, dailyPhysicalActivity, isDailyWaterGoalManuallySet) {
