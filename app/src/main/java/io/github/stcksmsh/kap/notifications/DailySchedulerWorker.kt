@@ -3,11 +3,14 @@ package io.github.stcksmsh.kap.notifications
 import android.content.Context
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.ceil
 
 class DailySchedulerWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {
@@ -35,23 +38,26 @@ class DailySchedulerWorker(context: Context, params: WorkerParameters) : Worker(
             set(Calendar.MINUTE, endMinute)
             set(Calendar.SECOND, 0)
         }
+        val nextNotificationTime = ceil(System.currentTimeMillis().toDouble() - startTime.timeInMillis).div(intervalMinutes * 60 * 1000) * intervalMinutes * 60 * 1000 + startTime.timeInMillis
 
-        // Schedule reminders for the day
-        var nextReminderTime = startTime.timeInMillis
-        while (nextReminderTime < endTime.timeInMillis) {
-            val delay = nextReminderTime - System.currentTimeMillis()
-            if (delay >= 0) {
-                Log.d(
-                    "DailySchedulerWorker",
-                    "Scheduling reminder at ${Date(nextReminderTime)} in $delay miliseconds"
-                )
-                val reminderRequest = OneTimeWorkRequestBuilder<ReminderWorker>().setInitialDelay(
-                    delay,
-                    TimeUnit.MILLISECONDS
-                ).addTag(ReminderScheduler.NOTIFICATION_TAG).build()
-                workManager.enqueue(reminderRequest)
-            }
-            nextReminderTime += TimeUnit.MINUTES.toMillis(intervalMinutes.toLong())
+        if(nextNotificationTime < endTime.timeInMillis) {
+            // Schedule the next reminder
+            val initialDelay = nextNotificationTime - System.currentTimeMillis()
+
+            // Schedule reminders for the day
+            Log.d(
+                "DailySchedulerWorker",
+                "Scheduling reminder at ${Date(nextNotificationTime.toLong())} in $initialDelay miliseconds"
+            )
+            val periodicReminderRequest = PeriodicWorkRequestBuilder<ReminderWorker>(
+                intervalMinutes.toLong(),
+                TimeUnit.MINUTES
+            ).setInitialDelay(
+                initialDelay.toLong(),
+                TimeUnit.MILLISECONDS
+            ).addTag(ReminderScheduler.NOTIFICATION_TAG).build()
+
+            workManager.enqueue(periodicReminderRequest)
         }
 
         // start tomorrow at startTime
@@ -76,10 +82,17 @@ class DailySchedulerWorker(context: Context, params: WorkerParameters) : Worker(
                 delay,
                 TimeUnit.MILLISECONDS
             ) // Run again in 24 hours
+                .setExpedited(
+                    OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST
+                )
                 .setInputData(inputData) // Pass the same reminder settings
                 .addTag(ReminderScheduler.NOTIFICATION_TAG).build()
 
-        workManager.enqueue(nextDaySchedulerRequest)
+        workManager.enqueueUniqueWork(
+            "daily_scheduler",
+            androidx.work.ExistingWorkPolicy.REPLACE,
+            nextDaySchedulerRequest
+        )
 
         return Result.success()
     }

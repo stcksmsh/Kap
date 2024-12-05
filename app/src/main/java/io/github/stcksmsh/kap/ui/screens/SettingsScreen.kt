@@ -3,13 +3,10 @@ package io.github.stcksmsh.kap.ui.screens
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -17,11 +14,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
-import io.github.stcksmsh.kap.data.saveSettingsData
+import io.github.stcksmsh.kap.data.saveAppSettings
 import io.github.stcksmsh.kap.data.saveUserSettings
 import io.github.stcksmsh.kap.model.AppSettings
+import io.github.stcksmsh.kap.model.UserSettings
 import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
@@ -30,17 +28,44 @@ import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
 fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
 
     val userData = loadUserSettings(context)
-    val settingsData = loadSettingsData(context)
+    val appSettings = loadAppSettings(context)
 
-    var selectedWeightUnitInput by remember { mutableStateOf(settingsData.weightUnit) }
-    var selectedVolumeUnitInput by remember { mutableStateOf(settingsData.volumeUnit) }
+    var selectedWeightUnitInput by remember { mutableStateOf(appSettings.weightUnit) }
+    var selectedVolumeUnitInput by remember { mutableStateOf(appSettings.volumeUnit) }
     var ageInput by remember { mutableIntStateOf(userData.age) }
     var weightInput by remember { mutableFloatStateOf(userData.weight) }
     var dailyPhysicalActivityInput by remember { mutableIntStateOf(userData.dailyPhysicalActivity) }
     var dailyWaterGoalInput by remember { mutableFloatStateOf(userData.dailyWaterGoal) }
-    var quickWaterAdditionVolumesInput by remember { mutableStateOf(settingsData.quickWaterAdditionVolumes) }
-    var startupAnimationEnabledInput by remember { mutableStateOf(settingsData.startupAnimationEnabled) }
+    var quickWaterAdditionVolumesInput by remember { mutableStateOf(appSettings.quickWaterAdditionVolumes) }
+    var startupAnimationEnabledInput by remember { mutableStateOf(appSettings.startupAnimationEnabled) }
 
+    LaunchedEffect(
+        selectedVolumeUnitInput,
+        selectedWeightUnitInput,
+        ageInput,
+        weightInput,
+        dailyPhysicalActivityInput,
+        dailyWaterGoalInput,
+        quickWaterAdditionVolumesInput,
+        startupAnimationEnabledInput
+    ) {
+        saveUserSettings(
+            context, UserSettings(
+                age = ageInput,
+                weight = weightInput,
+                dailyPhysicalActivity = dailyPhysicalActivityInput,
+                dailyWaterGoal = dailyWaterGoalInput
+            )
+        )
+        saveAppSettings(
+            context, AppSettings(
+                weightUnit = selectedWeightUnitInput,
+                volumeUnit = selectedVolumeUnitInput,
+                quickWaterAdditionVolumes = quickWaterAdditionVolumesInput,
+                startupAnimationEnabled = startupAnimationEnabledInput
+            )
+        )
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,33 +125,6 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
             quickWaterAdditionVolumes = quickWaterAdditionVolumesInput,
             onQuickWaterAdditionVolumesChanged = { quickWaterAdditionVolumesInput = it })
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = {
-                saveUserSettings(
-                    context = context,
-                    userSettings = userData.copy(
-                        age = ageInput,
-                        weight = weightInput,
-                        dailyPhysicalActivity = dailyPhysicalActivityInput,
-                        dailyWaterGoal = dailyWaterGoalInput
-                    ),
-                )
-                saveSettingsData(
-                    context = context, appSettings = AppSettings(
-                        startupAnimationEnabled = startupAnimationEnabledInput,
-                        weightUnit = selectedWeightUnitInput,
-                        volumeUnit = selectedVolumeUnitInput,
-                        quickWaterAdditionVolumes = quickWaterAdditionVolumesInput
-                    )
-                )
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .padding(48.dp)
-        ) {
-            Text("Save")
-        }
     }
 
 

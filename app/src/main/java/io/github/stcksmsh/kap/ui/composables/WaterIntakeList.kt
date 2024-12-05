@@ -87,7 +87,7 @@ private fun WaterIntakeRow(
     ) {
         // Water intake amount
         Text(
-            text = "${selectedVolumeUnit.convertMillisToString(waterIntake.intakeAmount)} ${selectedVolumeUnit.symbol}",
+            text = selectedVolumeUnit.convertMillisToUnitString(waterIntake.intakeAmount),
             fontSize = 18.sp,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.weight(2f),

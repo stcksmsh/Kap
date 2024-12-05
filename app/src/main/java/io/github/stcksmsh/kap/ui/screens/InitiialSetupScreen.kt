@@ -13,9 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
-import io.github.stcksmsh.kap.data.saveSettingsData
+import io.github.stcksmsh.kap.data.saveAppSettings
 import io.github.stcksmsh.kap.data.saveUserSettings
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
@@ -32,10 +32,10 @@ fun InitialSetupScreen(
         modifier = modifier.fillMaxSize()
     ) {
         val userData = loadUserSettings(context)
-        val settingsData = loadSettingsData(context)
+        val appSettings = loadAppSettings(context)
 
-        var selectedWeightUnitInput by remember { mutableStateOf(settingsData.weightUnit) }
-        var selectedVolumeUnitInput by remember { mutableStateOf(settingsData.volumeUnit) }
+        var selectedWeightUnitInput by remember { mutableStateOf(appSettings.weightUnit) }
+        var selectedVolumeUnitInput by remember { mutableStateOf(appSettings.volumeUnit) }
         var ageInput by remember { mutableIntStateOf(userData.age) }
         var weightInput by remember { mutableFloatStateOf(userData.weight) }
         var dailyPhysicalActivityInput by remember { mutableIntStateOf(userData.dailyPhysicalActivity) }
@@ -78,9 +78,9 @@ fun InitialSetupScreen(
                         dailyWaterGoal = dailyWaterGoalInput
                     ),
                 )
-                saveSettingsData(
+                saveAppSettings(
                     context = context,
-                    appSettings = settingsData.copy(
+                    appSettings = appSettings.copy(
                         weightUnit = selectedWeightUnitInput,
                         volumeUnit = selectedVolumeUnitInput
                     )

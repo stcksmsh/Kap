@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
-import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadAppSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ fun WaterIntakeInput(
         200.0f, 250.0f, 330.0f, 500.0f, 750.0f, -1.0f
     )
 
-    val selectedVolumeUnit = loadSettingsData(context).volumeUnit
+    val selectedVolumeUnit = loadAppSettings(context).volumeUnit
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),

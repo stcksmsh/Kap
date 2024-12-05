@@ -5,7 +5,7 @@ import io.github.stcksmsh.kap.model.AppSettings
 import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.model.WeightUnits
 
-fun saveSettingsData(context: Context, appSettings: AppSettings) {
+fun saveAppSettings(context: Context, appSettings: AppSettings) {
     val sharedProgression = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
     with(sharedProgression.edit()) {
         putBoolean("startupAnimationEnabled", appSettings.startupAnimationEnabled)
@@ -19,7 +19,7 @@ fun saveSettingsData(context: Context, appSettings: AppSettings) {
     }
 }
 
-fun loadSettingsData(context: Context): AppSettings {
+fun loadAppSettings(context: Context): AppSettings {
     val sharedPreferences = context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
     return AppSettings(
         startupAnimationEnabled = sharedPreferences.getBoolean("startupAnimationEnabled", true),

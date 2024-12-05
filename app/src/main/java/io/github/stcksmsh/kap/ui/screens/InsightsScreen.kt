@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
-import io.github.stcksmsh.kap.data.loadSettingsData
+import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.ui.composables.WaterIntakeList
 import java.text.SimpleDateFormat
@@ -51,7 +51,7 @@ fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
 
     val userData = loadUserSettings(context)
 
-    val settingsData = loadSettingsData(context)
+    val appSettings = loadAppSettings(context)
 
     // Fetch water intake data based on the selected filter
     val startAndEndDate by remember { derivedStateOf { getDateRangeForFilter(selectedFilter) } }
@@ -106,7 +106,7 @@ fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
 
         // Water Intake List
         WaterIntakeList(
-            selectedVolumeUnit = settingsData.volumeUnit,
+            selectedVolumeUnit = appSettings.volumeUnit,
             waterIntakeRepository = waterIntakeRepository,
             modifier = Modifier.weight(1f)
         )

@@ -57,6 +57,14 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
     }
 
     LaunchedEffect(remindersEnabled, intervalMinutes, startTime, endTime, soundEnabled, vibrationEnabled, hasNotificationPermission) {
+        // if reminders are "newly" enabled, schedule them
+        if(remindersEnabled && hasNotificationPermission && !reminderSettings.remindersEnabled) {
+            ReminderScheduler.scheduleReminders(context, reminderSettings)
+        }
+        // if reminders are disabled or notification permission is revoked
+        if(!remindersEnabled || !hasNotificationPermission) {
+            ReminderScheduler.cancelReminders(context)
+        }
         reminderSettings = ReminderSettings(
             remindersEnabled = remindersEnabled && hasNotificationPermission,
             intervalMinutes = intervalMinutes,
@@ -70,9 +78,6 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
             reminderSettings
         )
         ReminderScheduler.cancelReminders(context)
-        if (reminderSettings.remindersEnabled) {
-            ReminderScheduler.scheduleReminders(context, reminderSettings)
-        }
     }
 
     Column(
@@ -98,7 +103,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
 //            isEnabled = vibrationEnabled,
 //            onToggle = { newCheckedState ->
 //                vibrationEnabled = newCheckedState
-//            }
+//            },
 //        )
 //
 //        SwitchOptionRow(

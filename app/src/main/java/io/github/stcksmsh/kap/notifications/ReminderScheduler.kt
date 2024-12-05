@@ -25,6 +25,7 @@ object ReminderScheduler {
 
         // Enqueue the initial daily reminder scheduler
         val dailySchedulerRequest = OneTimeWorkRequestBuilder<DailySchedulerWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
             .setConstraints(constraints)
             .setInputData(createInputData(settings))
             .addTag(NOTIFICATION_TAG)
@@ -32,7 +33,11 @@ object ReminderScheduler {
 
         Log.d("ReminderScheduler", "Scheduling daily reminder")
 
-        workManager.enqueue(dailySchedulerRequest)
+        workManager.enqueueUniqueWork(
+            "daily_reminder",
+            ExistingWorkPolicy.REPLACE,
+            dailySchedulerRequest
+        )
     }
 
     fun cancelReminders(context: Context) {

@@ -24,14 +24,14 @@ fun DailyIntakeProgress(
     ) {
         // Display daily target
         Text(
-            text = "Daily Goal: ${volumeUnit.convertMillisToString(dailyGoalMillis)} ${volumeUnit.symbol}",
+            text = "Daily Goal: ${volumeUnit.convertMillisToUnitString(dailyGoalMillis)}",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         // Display current intake
         Text(
-            text = "Current Intake: ${volumeUnit.convertMillisToString(currentIntakeMillis)} ${volumeUnit.symbol}",
+            text = "Current Intake: ${volumeUnit.convertMillisToUnitString(currentIntakeMillis)}",
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )

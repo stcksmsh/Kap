@@ -1,8 +1,6 @@
 package io.github.stcksmsh.kap
 
-import android.app.NotificationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -16,7 +14,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -28,10 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserSettings
-import io.github.stcksmsh.kap.data.loadReminderSettings
-import io.github.stcksmsh.kap.data.loadSettingsData
-import io.github.stcksmsh.kap.notifications.NotificationHelper
-import io.github.stcksmsh.kap.notifications.ReminderScheduler
+import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
@@ -64,10 +58,10 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val coroutineScope = rememberCoroutineScope()
 
-            val settingsData = loadSettingsData(this)
+            val appSettings = loadAppSettings(this)
             val showInputScreen = !hasUserSettings(this)
             val fromWidget = intent.getBooleanExtra(KEY_FROM_WIDGET, false)
-            val showAnimation = settingsData.startupAnimationEnabled && !fromWidget
+            val showAnimation = appSettings.startupAnimationEnabled && !fromWidget
             val context = this
 
             val startDestination = when {
@@ -195,12 +189,7 @@ class MainActivity : ComponentActivity() {
                                 enterTransition = navigationEnterTransition,
                                 exitTransition = navigationExitTransition
                             ) {
-                                SupportScreen("Support me") {
-                                    navigateWithClearBackStack(
-                                        navController,
-                                        "home"
-                                    )
-                                }
+                                SupportScreen(context)
                             }
                         }
                     }

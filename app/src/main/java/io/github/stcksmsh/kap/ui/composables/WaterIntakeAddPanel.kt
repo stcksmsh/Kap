@@ -99,7 +99,7 @@ private fun WaterIntakeAddButton(
         modifier = modifier
     ) {
         Text(
-            text = "${selectedVolumeUnits.convertMillisToString(waterAmount)} ${selectedVolumeUnits.symbol}",
+            text = selectedVolumeUnits.convertMillisToUnitString(waterAmount),
             maxLines = 1
         )
     }

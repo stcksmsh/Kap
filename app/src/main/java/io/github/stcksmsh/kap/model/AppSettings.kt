@@ -46,6 +46,10 @@ enum class VolumeUnits(
         return roundedValue.stripTrailingZeros().toPlainString()
     }
 
+    fun convertMillisToUnitString(value: Float): String {
+        return "${convertMillisToString(value)} $symbol"
+    }
+
     fun convertStringToMillis(value: String): Float? {
         return value.toFloatOrNull()?.times(milliliters)
     }
