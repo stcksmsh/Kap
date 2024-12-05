@@ -31,7 +31,7 @@ data class TimeOfDay(
 
     operator fun minus(minute: Int): TimeOfDay {
         val newMinute = (this.minute - minute + 60) % 60
-        val newHour = (hour - (60 + minute - this.minute ) / 60 + 24) % 24
+        val newHour = (hour - (60 + minute - this.minute) / 60 + 24) % 24
         return TimeOfDay(newHour, newMinute)
     }
 

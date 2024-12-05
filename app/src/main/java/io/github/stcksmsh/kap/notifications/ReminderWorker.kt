@@ -10,7 +10,8 @@ import io.github.stcksmsh.kap.data.loadReminderSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.model.TimeOfDay
 
-class ReminderWorker(context: Context, params: WorkerParameters) : CoroutineWorker(context, params) {
+class ReminderWorker(context: Context, params: WorkerParameters) :
+    CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
         Log.d("ReminderWorker", "Notification check")
@@ -21,7 +22,13 @@ class ReminderWorker(context: Context, params: WorkerParameters) : CoroutineWork
         val dailyIntakeGoal = loadUserSettings(context = applicationContext).dailyWaterGoal
 
         val reminderSettings = loadReminderSettings(applicationContext)
-        if (!isDrinkingEnoughWater(currentIntake, dailyIntakeGoal, reminderSettings.startTime, reminderSettings.endTime)) {
+        if (!isDrinkingEnoughWater(
+                currentIntake,
+                dailyIntakeGoal,
+                reminderSettings.startTime,
+                reminderSettings.endTime
+            )
+        ) {
             NotificationHelper.showNotification(applicationContext)
         }
 
@@ -29,7 +36,12 @@ class ReminderWorker(context: Context, params: WorkerParameters) : CoroutineWork
     }
 }
 
-fun isDrinkingEnoughWater(currentIntake: Float, dailyIntake: Float, startTime: TimeOfDay, endTimeOfDay: TimeOfDay): Boolean{
+fun isDrinkingEnoughWater(
+    currentIntake: Float,
+    dailyIntake: Float,
+    startTime: TimeOfDay,
+    endTimeOfDay: TimeOfDay
+): Boolean {
     val currentTime = TimeOfDay.now()
 
     // calculate the time difference between the start and end time

@@ -38,9 +38,11 @@ class DailySchedulerWorker(context: Context, params: WorkerParameters) : Worker(
             set(Calendar.MINUTE, endMinute)
             set(Calendar.SECOND, 0)
         }
-        val nextNotificationTime = ceil(System.currentTimeMillis().toDouble() - startTime.timeInMillis).div(intervalMinutes * 60 * 1000) * intervalMinutes * 60 * 1000 + startTime.timeInMillis
+        val nextNotificationTime = ceil(
+            System.currentTimeMillis().toDouble() - startTime.timeInMillis
+        ).div(intervalMinutes * 60 * 1000) * intervalMinutes * 60 * 1000 + startTime.timeInMillis
 
-        if(nextNotificationTime < endTime.timeInMillis) {
+        if (nextNotificationTime < endTime.timeInMillis) {
             // Schedule the next reminder
             val initialDelay = nextNotificationTime - System.currentTimeMillis()
 

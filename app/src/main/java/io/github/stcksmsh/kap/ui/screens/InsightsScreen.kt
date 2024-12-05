@@ -73,7 +73,8 @@ fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
             modifier = Modifier.fillMaxWidth()
         ) {
             listOf("Last Week", "Last Month", "Last Year").forEach { filter ->
-                FilterChip(selected = selectedFilter == filter,
+                FilterChip(
+                    selected = selectedFilter == filter,
                     onClick = { selectedFilter = filter },
                     label = { Text(filter) },
                     enabled = (filter == "Last Week")
@@ -144,8 +145,8 @@ fun WaterIntakeGraph(
     // Generate list of dates from start to end date
     val correctedData = remember(startDate, correctedEndDate, data) {
         groupData(data.groupBy { getDateWithoutTime(it.date) }.map {
-                WaterIntake(intakeAmount = it.value.map { it.intakeAmount }.sum(), date = it.key)
-            }, startDate, correctedEndDate
+            WaterIntake(intakeAmount = it.value.map { it.intakeAmount }.sum(), date = it.key)
+        }, startDate, correctedEndDate
         )
     }
 

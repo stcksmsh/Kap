@@ -1,7 +1,6 @@
 package io.github.stcksmsh.kap.ui.screens
 
 
-
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

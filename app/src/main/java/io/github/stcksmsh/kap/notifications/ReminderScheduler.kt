@@ -13,7 +13,7 @@ object ReminderScheduler {
         val workManager = WorkManager.getInstance(context)
         workManager.cancelAllWorkByTag(NOTIFICATION_TAG) // Clear existing reminders
 
-        if(workManager.getWorkInfosByTag(NOTIFICATION_TAG).get().isNotEmpty()){
+        if (workManager.getWorkInfosByTag(NOTIFICATION_TAG).get().isNotEmpty()) {
             Log.d("ReminderScheduler", "Existing reminders found, cancelling all")
             workManager.cancelAllWorkByTag(NOTIFICATION_TAG)
         }

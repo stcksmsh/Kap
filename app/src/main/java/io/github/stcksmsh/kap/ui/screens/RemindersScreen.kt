@@ -5,7 +5,6 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -56,13 +55,21 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         hasNotificationPermission = isGranted
     }
 
-    LaunchedEffect(remindersEnabled, intervalMinutes, startTime, endTime, soundEnabled, vibrationEnabled, hasNotificationPermission) {
+    LaunchedEffect(
+        remindersEnabled,
+        intervalMinutes,
+        startTime,
+        endTime,
+        soundEnabled,
+        vibrationEnabled,
+        hasNotificationPermission
+    ) {
         // if reminders are "newly" enabled, schedule them
-        if(remindersEnabled && hasNotificationPermission && !reminderSettings.remindersEnabled) {
+        if (remindersEnabled && hasNotificationPermission && !reminderSettings.remindersEnabled) {
             ReminderScheduler.scheduleReminders(context, reminderSettings)
         }
         // if reminders are disabled or notification permission is revoked
-        if(!remindersEnabled || !hasNotificationPermission) {
+        if (!remindersEnabled || !hasNotificationPermission) {
             ReminderScheduler.cancelReminders(context)
         }
         reminderSettings = ReminderSettings(

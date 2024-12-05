@@ -58,7 +58,8 @@ fun UserSettingsInput(
             ?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } != false) && !weightString.value.isEmpty()
 
     val isDailyPhysicalActivityError =
-        (dailyPhysicalActivityString.toIntOrNull()?.let { it < 0 || it > 300 } != false) && !dailyPhysicalActivityString.isEmpty()
+        (dailyPhysicalActivityString.toIntOrNull()
+            ?.let { it < 0 || it > 300 } != false) && !dailyPhysicalActivityString.isEmpty()
 
     val isDailyWaterGoalError = (dailyWaterGoalString.value.toFloatOrNull()
         ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } != false) && !dailyPhysicalActivityString.isEmpty()

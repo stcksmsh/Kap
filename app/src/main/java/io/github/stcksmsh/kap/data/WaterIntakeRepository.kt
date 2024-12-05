@@ -14,7 +14,7 @@ class WaterIntakeRepository(private val waterIntakeDao: WaterIntakeDao) {
 
     val coroutineScope = CoroutineScope(Dispatchers.IO)
 
-    fun getPagedIntakes(): PagingSource<Int, WaterIntake>{
+    fun getPagedIntakes(): PagingSource<Int, WaterIntake> {
         return waterIntakeDao.getPagedIntakes()
     }
 

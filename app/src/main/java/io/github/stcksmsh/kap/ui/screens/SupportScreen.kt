@@ -40,7 +40,7 @@ fun SupportScreen(
         )
 
         Button(
-            onClick = {onDonateClick()},
+            onClick = { onDonateClick() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Donate")
@@ -64,9 +64,11 @@ fun SupportScreen(
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
             ),
-            modifier = Modifier.padding(top = 8.dp).clickable(
-                onClick = { onFollowMeClick() },
-            )
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable(
+                    onClick = { onFollowMeClick() },
+                )
         )
     }
 }
@@ -91,6 +93,7 @@ fun onShareAppClick(context: Context) {
     val chooser = Intent.createChooser(intent, "Share KAP with:")
     context.startActivity(chooser)
 }
+
 fun onFollowMeClick() {
     // TODO: Open social media link
 }

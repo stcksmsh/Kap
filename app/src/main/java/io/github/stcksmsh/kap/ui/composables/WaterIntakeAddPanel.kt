@@ -1,7 +1,5 @@
 package io.github.stcksmsh.kap.ui.composables
 
-import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -118,7 +116,8 @@ private fun CustomWaterIntakeAddButton(
     // Button to trigger the dialog
     Button(
         onClick = {
-            showDialog = true },
+            showDialog = true
+        },
         modifier = modifier
     ) {
         Text(

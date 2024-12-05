@@ -145,7 +145,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 InitialSetupScreen(
                                     context = context
-                                ){
+                                ) {
                                     navigateWithClearBackStack(
                                         navController,
                                         "home"

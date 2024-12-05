@@ -1,6 +1,5 @@
 package io.github.stcksmsh.kap.ui.composables
 
-import android.health.connect.datatypes.units.Volume
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -54,14 +53,14 @@ fun WaterIntakeList(
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        items(waterIntakes.itemSnapshotList){ waterIntake ->
+        items(waterIntakes.itemSnapshotList) { waterIntake ->
             waterIntake?.let {
                 WaterIntakeRow(
                     selectedVolumeUnit = selectedVolumeUnit,
                     waterIntake = it,
                     enableDelete = enableDelete,
                     onDelete = {
-                        coroutineScope.launch{
+                        coroutineScope.launch {
                             waterIntakeRepository.deleteWaterIntake(it)
                         }
                     }

@@ -4,9 +4,9 @@ import android.content.Context
 import io.github.stcksmsh.kap.model.ReminderSettings
 import io.github.stcksmsh.kap.model.TimeOfDay
 
-fun saveReminderSettings(context: Context, reminderSettings: ReminderSettings){
+fun saveReminderSettings(context: Context, reminderSettings: ReminderSettings) {
     val sharedPreferences = context.getSharedPreferences("reminder_prefs", Context.MODE_PRIVATE)
-    with(sharedPreferences.edit()){
+    with(sharedPreferences.edit()) {
         putBoolean("remindersEnabled", reminderSettings.remindersEnabled)
         putInt("intervalMinutes", reminderSettings.intervalMinutes)
         putInt("startTimeHour", reminderSettings.startTime.hour)
@@ -19,7 +19,7 @@ fun saveReminderSettings(context: Context, reminderSettings: ReminderSettings){
     }
 }
 
-fun loadReminderSettings(context: Context): ReminderSettings{
+fun loadReminderSettings(context: Context): ReminderSettings {
     val sharedPreferences = context.getSharedPreferences("reminder_prefs", Context.MODE_PRIVATE)
     return ReminderSettings(
         remindersEnabled = sharedPreferences.getBoolean("remindersEnabled", false),
