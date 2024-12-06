@@ -5,7 +5,7 @@ import java.math.RoundingMode
 
 enum class WeightUnits(
     val symbol: String,
-    val kgs: Float,
+    val kilograms: Float,
     val decimals: Int,
     val fullName: String
 ) {
@@ -14,14 +14,14 @@ enum class WeightUnits(
     STONES("st", 6.35029f, 1, "stones");
 
     fun convertKilosToString(value: Float): String {
-        val scaledValue = value / kgs
+        val scaledValue = value / kilograms
         val roundedValue =
             BigDecimal(scaledValue.toDouble()).setScale(decimals, RoundingMode.HALF_UP)
         return roundedValue.stripTrailingZeros().toPlainString()
     }
 
     fun convertStringToKilos(value: String): Float? {
-        return value.toFloatOrNull()?.times(kgs)
+        return value.toFloatOrNull()?.times(kilograms)
     }
 
 }

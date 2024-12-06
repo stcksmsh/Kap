@@ -28,19 +28,27 @@ fun UserSettingsInput(
 ) {
 
     // Remember and initialize states for user input fields
-    val ageString = if (age > 0) age.toString() else ""
+    var ageString by remember(age) {
+        mutableStateOf(
+            if (age > 0) age.toString() else ""
+        )
+    }
 
-    val weightString = remember(selectedWeightUnit, weight) {
+    var weightString by remember(weight) {
         mutableStateOf(
             if (weight > 0f) selectedWeightUnit.convertKilosToString(weight)
             else ""
         )
     }
 
-    val dailyPhysicalActivityString =
-        if (dailyPhysicalActivity >= 0) dailyPhysicalActivity.toString() else ""
+    var dailyPhysicalActivityString by remember(dailyPhysicalActivity) {
+        mutableStateOf(
+            if (dailyPhysicalActivity >= 0) dailyPhysicalActivity.toString() else ""
 
-    val dailyWaterGoalString = remember(selectedVolumeUnit, dailyWaterGoal) {
+        )
+    }
+
+    var dailyWaterGoalString by remember(dailyWaterGoal) {
         mutableStateOf(
             if (dailyWaterGoal > 0f) selectedVolumeUnit.convertMillisToString(dailyWaterGoal)
             else ""
@@ -50,24 +58,16 @@ fun UserSettingsInput(
     var isDailyWaterGoalManuallySet by remember { mutableStateOf(false) }
 
     // Validation checks
-    val isAgeError =
-        (ageString.toIntOrNull()?.let { it < 0 || it > 120 } != false) && !ageString.isEmpty()
+    val isAgeError by remember(ageString) { derivedStateOf { (ageString == "" && age != 0) || age > 120 } }
+    val isWeightError by remember(weightString) { derivedStateOf { (weightString == "" && weight != 0f) || weight > 500f} }
 
-    val isWeightError =
-        (weightString.value.toFloatOrNull()
-            ?.let { it < 0f || it > 500f / selectedWeightUnit.kgs } != false) && !weightString.value.isEmpty()
+    val isDailyPhysicalActivityError by remember(dailyPhysicalActivityString) { derivedStateOf { (dailyPhysicalActivityString == "" && dailyPhysicalActivity != -1) || dailyPhysicalActivity > 1440 } }
 
-    val isDailyPhysicalActivityError =
-        (dailyPhysicalActivityString.toIntOrNull()
-            ?.let { it < 0 || it > 300 } != false) && !dailyPhysicalActivityString.isEmpty()
+    val isDailyWaterGoalError by remember(dailyWaterGoalString) { derivedStateOf { (dailyWaterGoalString == "" && dailyWaterGoal != 0f) || dailyWaterGoal > 10000f } }
 
-    val isDailyWaterGoalError = (dailyWaterGoalString.value.toFloatOrNull()
-        ?.let { it < 0f || it > 10_000f / selectedVolumeUnit.milliliters } != false) && !dailyPhysicalActivityString.isEmpty()
-
-    // Trigger calculation when weight, age, or daily activity changes, if not manually set
     LaunchedEffect(age, weight, dailyPhysicalActivity, isDailyWaterGoalManuallySet) {
         if (!isDailyWaterGoalManuallySet) {
-            if (ageString == "" || weightString.value == "" || dailyPhysicalActivityString == "") return@LaunchedEffect
+            if (ageString == "" || weightString == "" || dailyPhysicalActivityString == "") return@LaunchedEffect
             onDailyWaterGoalChanged(
                 calculateOptimalWaterIntake(
                     age = age, weight = weight, dailyPhysicalActivity = dailyPhysicalActivity
@@ -96,9 +96,9 @@ fun UserSettingsInput(
                 value = ageString,
                 onValueChange = {
                     onValueChange(
-                        it,
-                        0
+                        it, 0
                     ) {
+                        ageString = it
                         it.toIntOrNull()?.let {
                             onAgeChanged(it)
                         }
@@ -115,13 +115,12 @@ fun UserSettingsInput(
             )
 
             TextField(
-                value = weightString.value,
+                value = weightString,
                 onValueChange = {
                     onValueChange(
-                        it,
-                        selectedWeightUnit.decimals
+                        it, selectedWeightUnit.decimals
                     ) {
-                        weightString.value = it
+                        weightString = it
                         selectedWeightUnit.convertStringToKilos(it)?.let {
                             onWeightChanged(it)
                         }
@@ -143,9 +142,9 @@ fun UserSettingsInput(
                 value = dailyPhysicalActivityString,
                 onValueChange = {
                     onValueChange(
-                        it,
-                        0
+                        it, 0
                     ) {
+                        dailyPhysicalActivityString = it
                         it.toIntOrNull()?.let {
                             onDailyPhysicalActivityChanged(it)
                         }
@@ -162,14 +161,13 @@ fun UserSettingsInput(
             )
 
             TextField(
-                value = dailyWaterGoalString.value,
+                value = dailyWaterGoalString,
                 onValueChange = {
                     onValueChange(
-                        it,
-                        selectedVolumeUnit.decimals
+                        it, selectedVolumeUnit.decimals
                     ) {
+                        dailyWaterGoalString = it
                         isDailyWaterGoalManuallySet = true
-                        dailyWaterGoalString.value = it
                         selectedVolumeUnit.convertStringToMillis(it)?.let {
                             onDailyWaterGoalChanged(it)
                         }

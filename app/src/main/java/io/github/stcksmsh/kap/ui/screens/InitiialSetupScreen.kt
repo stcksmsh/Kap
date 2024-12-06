@@ -17,6 +17,10 @@ import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.data.saveAppSettings
 import io.github.stcksmsh.kap.data.saveUserSettings
+import io.github.stcksmsh.kap.model.AppSettings
+import io.github.stcksmsh.kap.model.UserSettings
+import io.github.stcksmsh.kap.model.VolumeUnits
+import io.github.stcksmsh.kap.model.WeightUnits
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
 
@@ -31,15 +35,14 @@ fun InitialSetupScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier.fillMaxSize()
     ) {
-        val userData = loadUserSettings(context)
         val appSettings = loadAppSettings(context)
 
         var selectedWeightUnitInput by remember { mutableStateOf(appSettings.weightUnit) }
         var selectedVolumeUnitInput by remember { mutableStateOf(appSettings.volumeUnit) }
-        var ageInput by remember { mutableIntStateOf(userData.age) }
-        var weightInput by remember { mutableFloatStateOf(userData.weight) }
-        var dailyPhysicalActivityInput by remember { mutableIntStateOf(userData.dailyPhysicalActivity) }
-        var dailyWaterGoalInput by remember { mutableFloatStateOf(userData.dailyWaterGoal) }
+        var ageInput by remember { mutableIntStateOf(0) }
+        var weightInput by remember { mutableFloatStateOf(0f) }
+        var dailyPhysicalActivityInput by remember { mutableIntStateOf(-1) }
+        var dailyWaterGoalInput by remember { mutableFloatStateOf(0f) }
 
 
         UserSettingsInput(
@@ -71,7 +74,7 @@ fun InitialSetupScreen(
             onClick = {
                 saveUserSettings(
                     context = context,
-                    userSettings = userData.copy(
+                    userSettings = UserSettings(
                         age = ageInput,
                         weight = weightInput,
                         dailyPhysicalActivity = dailyPhysicalActivityInput,

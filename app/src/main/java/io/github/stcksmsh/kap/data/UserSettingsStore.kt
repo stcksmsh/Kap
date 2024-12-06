@@ -20,7 +20,7 @@ fun loadUserSettings(context: Context): UserSettings {
         age = sharedPreferences.getInt("age", 0),
         weight = sharedPreferences.getFloat("weight", 0f),
         dailyPhysicalActivity = sharedPreferences.getInt("dailyPhysicalActivityDuration", -1),
-        dailyWaterGoal = sharedPreferences.getFloat("dalyWaterGoal", -1f)
+        dailyWaterGoal = sharedPreferences.getFloat("dalyWaterGoal", 0f)
     )
 }
 
