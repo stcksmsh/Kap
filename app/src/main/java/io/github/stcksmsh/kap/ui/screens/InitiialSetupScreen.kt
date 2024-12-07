@@ -23,6 +23,7 @@ import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.model.WeightUnits
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
+import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
 
 @Composable
 fun InitialSetupScreen(

@@ -23,6 +23,7 @@ import io.github.stcksmsh.kap.model.UserSettings
 import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
+import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
 
 @Composable
 fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
@@ -39,15 +40,12 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
     var quickWaterAdditionVolumesInput by remember { mutableStateOf(appSettings.quickWaterAdditionVolumes) }
     var startupAnimationEnabledInput by remember { mutableStateOf(appSettings.startupAnimationEnabled) }
 
+
     LaunchedEffect(
-        selectedVolumeUnitInput,
-        selectedWeightUnitInput,
         ageInput,
         weightInput,
         dailyPhysicalActivityInput,
-        dailyWaterGoalInput,
-        quickWaterAdditionVolumesInput,
-        startupAnimationEnabledInput
+        dailyWaterGoalInput
     ) {
         saveUserSettings(
             context, UserSettings(
@@ -57,6 +55,14 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
                 dailyWaterGoal = dailyWaterGoalInput
             )
         )
+    }
+
+    LaunchedEffect(
+        selectedVolumeUnitInput,
+        selectedWeightUnitInput,
+        quickWaterAdditionVolumesInput,
+        startupAnimationEnabledInput
+    ) {
         saveAppSettings(
             context, AppSettings(
                 weightUnit = selectedWeightUnitInput,
@@ -65,6 +71,10 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
                 startupAnimationEnabled = startupAnimationEnabledInput
             )
         )
+    }
+
+    LaunchedEffect(selectedVolumeUnitInput, quickWaterAdditionVolumesInput, dailyWaterGoalInput) {
+        updateWaterIntakeWidgetState(context)
     }
 
     Column(

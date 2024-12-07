@@ -26,6 +26,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.model.VolumeUnits
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDateTime
@@ -60,7 +62,7 @@ fun WaterIntakeList(
                     waterIntake = it,
                     enableDelete = enableDelete,
                     onDelete = {
-                        coroutineScope.launch {
+                        CoroutineScope(Dispatchers.IO).launch {
                             waterIntakeRepository.deleteWaterIntake(it)
                         }
                     }

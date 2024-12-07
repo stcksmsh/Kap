@@ -14,6 +14,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
 import io.github.stcksmsh.kap.ui.theme.AppTheme
+import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
@@ -54,6 +56,7 @@ class MainActivity : ComponentActivity() {
 
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
 
+
         setContent {
             val navController = rememberNavController()
             val coroutineScope = rememberCoroutineScope()
@@ -69,6 +72,12 @@ class MainActivity : ComponentActivity() {
                 showInputScreen -> "input"
                 else -> "home"
             }
+            LaunchedEffect(Unit) {
+                coroutineScope.launch {
+                    updateWaterIntakeWidgetState(context)
+                }
+            }
+
 
             val animationDuration = 500
 

@@ -19,8 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-val coroutineScope = CoroutineScope(Dispatchers.IO)
-
 @Composable
 fun WaterIntakeInput(
     waterIntakeRepository: WaterIntakeRepository,
@@ -48,7 +46,7 @@ fun WaterIntakeInput(
             } else {
                 Button(
                     onClick = {
-                        coroutineScope.launch {
+                        CoroutineScope(Dispatchers.IO).launch {
                             waterIntakeRepository.insertWaterIntake(
                                 WaterIntake(
                                     intakeAmount = volume

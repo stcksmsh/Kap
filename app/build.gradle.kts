@@ -69,6 +69,10 @@ dependencies {
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
 
+    // Glance library
+    implementation(libs.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
     // Room dependencies
     val roomVersion = "2.5.2" // Replace with the latest Room version
     implementation(libs.androidx.room.runtime)
