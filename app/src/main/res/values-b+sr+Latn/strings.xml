@@ -41,8 +41,9 @@
 
         Pogledaj ovde: %1$s
         Imaš pitanja? Slobodno me pitaj!</string>
-    <string name="google_play_url">[link do Google Play-a]</string>
     <string name="share_app_with">Podeli KAP sa:</string>
+    <string name="want_to_contribute_or_translate">Želite da doprinesete ili prevedete?</string>
+    <string name="visit_my_github">Posetite moj GitHub</string>
 
     <!-- Composable -->
     <string name="quick_addition_volumes">Brzi dodaci količina</string>

@@ -41,8 +41,11 @@
 
         Check it out here: %1$s
         Got questions? Just ask me!</string>
-    <string name="google_play_url">[google play link]</string>
+    <string name="google_play_url" translatable="false">[google play link]</string>
     <string name="share_app_with">Share KAP with:</string>
+    <string name="want_to_contribute_or_translate">Want to contribute or translate?</string>
+    <string name="visit_my_github">Visit my GitHub</string>
+    <string name="github_url" translatable="false">https://github.com/stcksmsh/Kap</string>
 
 
     <!-- Composable -->

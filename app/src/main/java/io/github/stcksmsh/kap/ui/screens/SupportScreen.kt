@@ -2,6 +2,7 @@ package io.github.stcksmsh.kap.ui.screens
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -9,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,19 +59,26 @@ fun SupportScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Button(
+            onClick = { onFollowMeClick() },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(R.string.follow_me))
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
-            text = AnnotatedString(stringResource(R.string.follow_me)),
-            style = MaterialTheme.typography.bodyLarge.copy(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center
-            ),
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .clickable(
-                    onClick = { onFollowMeClick() },
-                )
+            text = stringResource(R.string.want_to_contribute_or_translate),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 24.dp)
         )
+        Button(
+            onClick = { onGithubClick(context) },
+        ) {
+            Text(text = stringResource(R.string.visit_my_github))
+        }
     }
 }
 
@@ -93,4 +100,12 @@ fun onShareAppClick(context: Context) {
 
 fun onFollowMeClick() {
     // TODO: Open social media link
+}
+
+fun onGithubClick(context: Context) {
+    val githubLink = context.getString(R.string.github_url)
+
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubLink))
+
+    context.startActivity(intent)
 }

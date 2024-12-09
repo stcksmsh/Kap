@@ -114,7 +114,7 @@ fun WidgetLayout(
             // Button Section
             AddWaterButtonGroup(context, quickAddVolumes, volumeUnit)
 
-            Spacer(modifier = GlanceModifier.height(12.dp)) // Extra spacing before motivational text
+            Spacer(modifier = GlanceModifier.height(16.dp)) // Extra spacing before motivational text
 
             // Motivational Text
             Text(
