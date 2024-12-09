@@ -66,6 +66,12 @@ dependencies {
     implementation(libs.vico.core)
     implementation(libs.vico.views)
 
+
+    // wearable
+    implementation(libs.androidx.wear)
+    implementation(libs.androidx.tiles)
+    implementation(libs.play.services.wearable)
+    
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
 

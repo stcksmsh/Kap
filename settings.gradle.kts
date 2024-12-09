@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kap"
 include(":app")
+include(":wearable")
