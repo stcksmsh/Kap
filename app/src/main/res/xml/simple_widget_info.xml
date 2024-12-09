@@ -2,4 +2,5 @@
     android:minWidth="320dp"
     android:minHeight="110dp"
     android:updatePeriodMillis="0"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    android:previewImage="@drawable/widget_preview" />
