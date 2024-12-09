@@ -8,10 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun SupportScreen(
@@ -26,14 +28,14 @@ fun SupportScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Support the Developer",
+            text = stringResource(R.string.support_the_developer),
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         Text(
-            text = "Thank you for using the app! If you’d like to support me, here’s how you can help:",
+            text = stringResource(R.string.thank_you_how_to_help),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(bottom = 24.dp)
@@ -43,7 +45,7 @@ fun SupportScreen(
             onClick = { onDonateClick() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Donate")
+            Text(text = stringResource(R.string.donate))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -52,13 +54,13 @@ fun SupportScreen(
             onClick = { onShareAppClick(context) },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Share the App")
+            Text(text = stringResource(R.string.share_app))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = AnnotatedString("Follow me on Social Media"),
+            text = AnnotatedString(stringResource(R.string.follow_me)),
             style = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 16.sp,
@@ -78,19 +80,14 @@ fun onDonateClick() {
 }
 
 fun onShareAppClick(context: Context) {
-    val shareText = """
-        Hey! I’ve been using this app called KAP to track my water intake. 🥤
-        It’s super simple and helps me stay hydrated.
-        
-        Check it out here: [Your App Link]
-        Got questions? Just ask me!
-    """.trimIndent()
+    val googlePlayUrl = context.getString(R.string.google_play_url)
+    val shareText = context.getString(R.string.share_message_template, googlePlayUrl).trimIndent()
 
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, shareText)
     }
-    val chooser = Intent.createChooser(intent, "Share KAP with:")
+    val chooser = Intent.createChooser(intent, context.getString(R.string.share_app_with))
     context.startActivity(chooser)
 }
 

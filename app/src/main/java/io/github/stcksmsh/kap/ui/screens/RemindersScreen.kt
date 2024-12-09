@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -24,6 +25,7 @@ import io.github.stcksmsh.kap.model.ReminderSettings
 import io.github.stcksmsh.kap.model.TimeOfDay
 import io.github.stcksmsh.kap.notifications.NotificationHelper
 import io.github.stcksmsh.kap.notifications.ReminderScheduler
+import io.github.stcksmsh.kap.R
 import java.util.Locale
 
 @Composable
@@ -121,7 +123,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SwitchOptionRow(
-            label = "Enable reminders",
+            label = stringResource(R.string.enable_reminders),
             isEnabled = remindersEnabled && hasNotificationPermission,
             onToggle = { newCheckedState ->
                 if(!hasNotificationPermission || !hasIgnoreBatteryOptimizationsPermission) {
@@ -133,7 +135,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
 
         // TODO: This doesn't work in the current version of the app
 //        SwitchOptionRow(
-//            label = "Enable vibration",
+//            label = stringResource(R.string.enable_vibration),
 //            isEnabled = vibrationEnabled,
 //            onToggle = { newCheckedState ->
 //                vibrationEnabled = newCheckedState
@@ -141,7 +143,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
 //        )
 //
 //        SwitchOptionRow(
-//            label = "Enable sound",
+//            label = stringResource(R.string.enable_sound),
 //            isEnabled = soundEnabled,
 //            onToggle = { newCheckedState ->
 //                soundEnabled = newCheckedState
@@ -150,7 +152,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
 
 
         TimeOfDayInputRow(
-            label = "Start of the day",
+            label = stringResource(R.string.start_of_day),
             initialTime = startTime,
             onTimeChanged = { newStartTime ->
                 startTime = newStartTime
@@ -163,7 +165,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         TimeOfDayInputRow(
-            label = "End of the day",
+            label = stringResource(R.string.end_of_day),
             initialTime = endTime,
             onTimeChanged = { newEndTime ->
                 endTime = newEndTime
@@ -175,7 +177,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         TimeOfDayInputRow(
-            label = "Reminder interval",
+            label = stringResource(R.string.remind_me_every),
             initialTime = TimeOfDay(
                 hour = reminderSettings.intervalMinutes / 60,
                 minute = reminderSettings.intervalMinutes % 60
@@ -192,7 +194,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
                 onClick = { NotificationHelper.showNotification(context) },
                 enabled = remindersEnabled && hasNotificationPermission
             ) {
-                Text(text = "Send notification")
+                Text(text = stringResource(R.string.send_notification_debug))
             }
         }
     }

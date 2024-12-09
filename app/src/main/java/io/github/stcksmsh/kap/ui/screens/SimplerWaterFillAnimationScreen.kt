@@ -19,15 +19,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.stcksmsh.kap.ui.theme.AppTypography
+import io.github.stcksmsh.kap.R
 import kotlin.math.PI
 import kotlin.math.sin
 
 @Composable
 fun SimpleWaterFillAnimationScreen(
-    context: Context,
     modifier: Modifier = Modifier,
     animationDuration: Int = 2500,
     onAnimationEnd: () -> Unit = {}
@@ -64,12 +65,7 @@ fun SimpleWaterFillAnimationScreen(
     val backgroundColor = MaterialTheme.colorScheme.background
     val waterColor = MaterialTheme.colorScheme.primary // Light blue color for water
 
-    val appNameRes = context.applicationInfo.labelRes
-    val appName = if (appNameRes != 0) {
-        context.getString(appNameRes)
-    } else {
-        "App Name Not Found" // Fallback if the app name resource is missing
-    }.uppercase()
+    val appName = stringResource(R.string.app_name).uppercase()
 
     BoxWithConstraints(
         modifier = modifier

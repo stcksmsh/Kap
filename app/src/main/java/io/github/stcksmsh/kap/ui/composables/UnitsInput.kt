@@ -17,11 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.model.WeightUnits
 import io.github.stcksmsh.kap.ui.theme.AppTypography
+import io.github.stcksmsh.kap.R
 
 
 @Composable
@@ -37,7 +39,7 @@ fun UnitsInput(
         horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier
     ) {
         Text(
-            text = "Units",
+            text = stringResource(R.string.units),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
                 .padding(12.dp)
@@ -73,7 +75,7 @@ fun VolumeUnitDropdown(
         expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier
     ) {
         TextField(
-            value = selectedVolumeUnit.symbol,
+            value = selectedVolumeUnit.getLocalizedSymbol(),
             onValueChange = {},
             readOnly = true,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
@@ -86,7 +88,7 @@ fun VolumeUnitDropdown(
             VolumeUnits.entries.forEach { unit ->
                 DropdownMenuItem(text = {
                     Text(
-                        text = "${unit.symbol} - ${unit.fullName}",
+                        text = "${unit.getLocalizedSymbol()} - ${unit.fullName}",
                         style = AppTypography.bodySmall,
                         textAlign = TextAlign.Start,
                     )
@@ -112,7 +114,7 @@ fun WeightUnitDropdown(
         expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier
     ) {
         TextField(
-            value = selectedWeightUnit.symbol,
+            value = selectedWeightUnit.getLocalizedSymbol(),
             onValueChange = {},
             readOnly = true,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
@@ -125,7 +127,7 @@ fun WeightUnitDropdown(
             WeightUnits.entries.forEach { unit ->
                 DropdownMenuItem(text = {
                     Text(
-                        text = "${unit.symbol} - ${unit.fullName}",
+                        text = "${unit.getLocalizedSymbol()} - ${unit.fullName}",
                         style = AppTypography.bodySmall,
                         textAlign = TextAlign.Start,
                     )

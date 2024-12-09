@@ -10,10 +10,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun InfoPopUp(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
@@ -24,7 +26,7 @@ fun InfoPopUp(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     ) {
         // Information icon
         Icon(imageVector = Icons.Filled.Info,
-            contentDescription = "Information",
+            contentDescription = stringResource(R.string.information),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .padding(8.dp)
@@ -59,7 +61,7 @@ fun InfoPopUp(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
                 ) {
                     // Title
                     Text(
-                        text = "Information",
+                        text = stringResource(R.string.information),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center
@@ -72,7 +74,7 @@ fun InfoPopUp(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
                     Button(
                         onClick = { showPopup = false }, modifier = Modifier.align(Alignment.End)
                     ) {
-                        Text("Close")
+                        Text(stringResource(R.string.close))
                     }
                 }
             }

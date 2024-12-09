@@ -7,8 +7,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.model.VolumeUnits
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun QuickWaterAdditionVolumesInput(
@@ -39,7 +41,7 @@ fun QuickWaterAdditionVolumesInput(
         ) {
             Row {
                 Text(
-                    text = "Quick Addition Volumes",
+                    text = stringResource(R.string.quick_addition_volumes),
                     style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier
                         .padding(12.dp)
@@ -51,7 +53,7 @@ fun QuickWaterAdditionVolumesInput(
                     modifier = Modifier.align(Alignment.CenterVertically),
                 ) {
                     Text(
-                        text = "Volumes of water that can be added with a single tap, also used in the widget.",
+                        text = stringResource(R.string.quick_addition_volumes_description),
                         modifier = Modifier.padding(8.dp)
                     )
                 }

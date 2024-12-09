@@ -24,6 +24,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import io.github.stcksmsh.kap.data.*
+import io.github.stcksmsh.kap.R
 import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.ui.theme.GlanceAppTheme
 import kotlinx.coroutines.Dispatchers
@@ -48,9 +49,9 @@ class SimpleWidget : GlanceAppWidget() {
                 ?: emptyList()
 
             if (quickAdditionVolumes.isEmpty()) {
-                SetupPrompt()
+                SetupPrompt(context)
             } else {
-                WidgetLayout(volumeUnit, dailyWaterGoal, currentIntake, quickAdditionVolumes)
+                WidgetLayout(context, volumeUnit, dailyWaterGoal, currentIntake, quickAdditionVolumes)
             }
         }
     }
@@ -59,9 +60,9 @@ class SimpleWidget : GlanceAppWidget() {
 // Composable to Show a Setup Prompt
 @SuppressLint("RestrictedApi")
 @Composable
-fun SetupPrompt() {
+fun SetupPrompt(context: Context) {
     Text(
-        text = "Open the app to set up the widget",
+        text = context.getString(R.string.open_app_to_configure),
         style = TextStyle(
             color = GlanceTheme.colors.background,
             fontSize = 14.sp
@@ -74,6 +75,7 @@ fun SetupPrompt() {
 
 @Composable
 fun WidgetLayout(
+    context: Context,
     volumeUnit: VolumeUnits,
     dailyGoal: Float,
     currentIntake: Float,
@@ -89,7 +91,7 @@ fun WidgetLayout(
         ) {
             // Title Section
             Text(
-                text = "Water Intake",
+                text = context.getString(R.string.water_intake),
                 style = TextStyle(
                     color = GlanceTheme.colors.primary,
                     fontSize = 16.sp,
@@ -100,6 +102,7 @@ fun WidgetLayout(
 
             // Progress Bar Section
             WaterProgressBar(
+                context = context,
                 progress = (currentIntake / dailyGoal).coerceAtMost(1f),
                 currentIntake = currentIntake,
                 goalIntake = dailyGoal,
@@ -109,16 +112,16 @@ fun WidgetLayout(
             Spacer(modifier = GlanceModifier.height(8.dp)) // Spacing after progress bar
 
             // Button Section
-            AddWaterButtonGroup(quickAddVolumes, volumeUnit)
+            AddWaterButtonGroup(context, quickAddVolumes, volumeUnit)
 
             Spacer(modifier = GlanceModifier.height(12.dp)) // Extra spacing before motivational text
 
             // Motivational Text
             Text(
                 text = if ((currentIntake / dailyGoal) >= 1f) {
-                    "Great job! You've met your goal!"
+                    context.getString(R.string.great_job)
                 } else {
-                    "Stay hydrated! Keep it up!"
+                    context.getString(R.string.keep_it_up)
                 },
                 style = TextStyle(
                     color = GlanceTheme.colors.onBackground,
@@ -134,6 +137,7 @@ fun WidgetLayout(
 @SuppressLint("RestrictedApi")
 @Composable
 fun WaterProgressBar(
+    context: Context,
     progress: Float,
     currentIntake: Float,
     goalIntake: Float,
@@ -146,7 +150,7 @@ fun WaterProgressBar(
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally
     ) {
         Text(
-            text = "${volumeUnit.convertMillisToUnitString(currentIntake)} / ${volumeUnit.convertMillisToUnitString(goalIntake)}",
+            text = "${volumeUnit.convertMillisToUnitString(context, currentIntake)} / ${volumeUnit.convertMillisToUnitString(context, goalIntake)}",
             style = TextStyle(
                 color = GlanceTheme.colors.primary,
                 fontSize = 16.sp
@@ -168,7 +172,7 @@ fun WaterProgressBar(
 
 // Composable for Quick Add Buttons
 @Composable
-fun AddWaterButtonGroup(quickAddVolumes: List<Float>, volumeUnit: VolumeUnits) {
+fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Float>, volumeUnit: VolumeUnits) {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
@@ -177,7 +181,7 @@ fun AddWaterButtonGroup(quickAddVolumes: List<Float>, volumeUnit: VolumeUnits) {
     ) {
         quickAddVolumes.forEachIndexed { index, intake ->
             Button(
-                text = "+${volumeUnit.convertMillisToUnitString(intake)}",
+                text = "+${volumeUnit.convertMillisToUnitString(context, intake)}",
                 onClick = actionRunCallback<AddWaterAction>(
                     parameters = actionParametersOf(ActionParameters.Key<Float>("amount") to intake)
                 ),

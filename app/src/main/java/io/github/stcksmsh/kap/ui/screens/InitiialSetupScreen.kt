@@ -12,18 +12,15 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.loadAppSettings
-import io.github.stcksmsh.kap.data.loadUserSettings
 import io.github.stcksmsh.kap.data.saveAppSettings
 import io.github.stcksmsh.kap.data.saveUserSettings
-import io.github.stcksmsh.kap.model.AppSettings
 import io.github.stcksmsh.kap.model.UserSettings
-import io.github.stcksmsh.kap.model.VolumeUnits
-import io.github.stcksmsh.kap.model.WeightUnits
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
-import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun InitialSetupScreen(
@@ -95,7 +92,7 @@ fun InitialSetupScreen(
                 .fillMaxWidth()
                 .padding(24.dp)
         ) {
-            Text("Save")
+            Text(stringResource(R.string.save))
         }
 
     }

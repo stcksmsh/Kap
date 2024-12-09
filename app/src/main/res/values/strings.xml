@@ -1,3 +1,94 @@
 <resources>
     <string name="app_name">Kap</string>
+
+    <!--  Initial setup screen  -->
+    <string name="save">Save</string>
+
+    <!-- Home screen -->
+    <string name="home_screen_title">Home</string>
+
+    <!--  Insights screen  -->
+    <string name="insights_screen_title">Insights</string>
+    <string name="last_week">Last week</string>
+    <string name="last_month">Last month</string>
+    <string name="last_year">Last year</string>
+
+    <!-- Settings screen -->
+    <string name="settings_screen_title">Settings</string>
+    <string name="startup_animation">Startup Animation</string>
+    <string name="enabled">Enabled</string>
+    <string name="disabled">Disabled</string>
+
+    <!--  Reminders screen  -->
+    <string name="reminders_screen_title">Reminders</string>
+    <string name="enable_reminders">Enable reminders</string>
+    <string name="enable_vibration">Enable vibration</string>
+    <string name="enable_sound">Enable sound</string>
+    <string name="start_of_day">Start of the day</string>
+    <string name="end_of_day">End of the day</string>
+    <string name="remind_me_every">Remind me every</string>
+    <string name="send_notification_debug">Send notification</string>
+
+    <!--  Support me screen  -->
+    <string name="support_me_screen_title">Support me</string>
+    <string name="support_the_developer">Support the developer</string>
+    <string name="thank_you_how_to_help">Thank you for using the app! If you’d like to support me, here’s how you can help:</string>
+    <string name="donate">Donate</string>
+    <string name="share_app">Share the App</string>
+    <string name="follow_me">Follow me on Social Media</string>
+    <string name="share_message_template">Hey! I’ve been using this app called KAP to track my water intake. 🥤
+        It’s super simple and helps me stay hydrated.
+
+        Check it out here: %1$s
+        Got questions? Just ask me!</string>
+    <string name="google_play_url">[google play link]</string>
+    <string name="share_app_with">Share KAP with:</string>
+
+
+    <!-- Composable -->
+    <string name="quick_addition_volumes">Quick addition volumes</string>
+    <string name="quick_addition_volumes_description">Volumes of water that can be added with a single tap, also used in the widget.</string>
+    <string name="daily_progress_template">%1$d%% of Goal Achieved</string>
+    <string name="daily_goal_template">Daily Goal: %1$s</string>
+    <string name="current_intake_template">Current Intake: %1$s</string>
+    <string name="information">Information</string>
+    <string name="close">Close</string>
+    <string name="menu">Menu</string>
+    <string name="units">Units</string>
+    <string name="user_information">User Information</string>
+    <string name="age">Age</string>
+    <string name="weight">Weight</string>
+    <string name="daily_physical_activity">Daily Physical Activity (min)</string>
+    <string name="daily_water_intake_goal">Daily Water Intake Goal</string>
+    <string name="calculate">Calculate</string>
+    <string name="custom">Custom</string>
+    <string name="enter_custom_amount">Enter Custom Amount</string>
+    <string name="amount_template">Amount (%1$s)</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+
+    <!-- Units -->
+    <string name="milliliters">ml</string>
+    <string name="liters">L</string>
+    <string name="ounces">oz</string>
+    <string name="pints">pt</string>
+    <string name="gallons">gal</string>
+    <string name="kilograms">kg</string>
+    <string name="pounds">lbs</string>
+    <string name="stone">st</string>
+
+
+    <!-- Widget -->
+    <string name="open_app_to_configure">Open the app to configure the widget</string>
+    <string name="water_intake">Water Intake</string>
+    <string name="great_job">Great job! You\'ve met your goal!</string>
+    <string name="keep_it_up">Stay hydrated! Keep it up!</string>
+
+
+    <string name="trade_mark" translatable="false">© 2024 Kap by Kosta Vukićević</string>
+    <string name="cups">cups</string>
+
 </resources>

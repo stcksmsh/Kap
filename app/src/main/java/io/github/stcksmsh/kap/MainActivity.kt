@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -122,8 +123,11 @@ class MainActivity : ComponentActivity() {
                                 onMenuClick = {
                                     coroutineScope.launch { drawerState.open() }
                                 },
-                                title = navController.currentBackStackEntry?.destination?.route?.replaceFirstChar { it.uppercase() }
-                                    ?: "Home")
+                                title = getTitleFromBackStack(
+                                    context,
+                                    navController.currentBackStackEntry?.destination?.route
+                                )
+                            )
                         }
                     }) { paddingValues ->
                         NavHost(
@@ -139,7 +143,7 @@ class MainActivity : ComponentActivity() {
                                 exitTransition = navigationExitTransition
                             ) {
                                 SimpleWaterFillAnimationScreen(
-                                    context = context, animationDuration = 1500
+                                    animationDuration = 1500
                                 ) {
                                     navigateWithClearBackStack(
                                         navController,
@@ -212,5 +216,15 @@ class MainActivity : ComponentActivity() {
 fun navigateWithClearBackStack(navController: NavController, route: String) {
     navController.navigate(route) {
         popUpTo(0) { inclusive = true } // Clears all destinations before navigating
+    }
+}
+
+fun getTitleFromBackStack(context: Context, route: String?): String {
+    return when (route) {
+        "insights" -> context.getString(R.string.insights_screen_title)
+        "settings" -> context.getString(R.string.settings_screen_title)
+        "reminders" -> context.getString(R.string.reminders_screen_title)
+        "support me" -> context.getString(R.string.support_me_screen_title)
+        else -> context.getString(R.string.home_screen_title)
     }
 }

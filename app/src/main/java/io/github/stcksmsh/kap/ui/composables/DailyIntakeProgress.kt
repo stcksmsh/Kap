@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.model.VolumeUnits
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun DailyIntakeProgress(
@@ -24,14 +26,14 @@ fun DailyIntakeProgress(
     ) {
         // Display daily target
         Text(
-            text = "Daily Goal: ${volumeUnit.convertMillisToUnitString(dailyGoalMillis)}",
+            text = stringResource(R.string.daily_goal_template, volumeUnit.convertMillisToUnitString(dailyGoalMillis)),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         // Display current intake
         Text(
-            text = "Current Intake: ${volumeUnit.convertMillisToUnitString(currentIntakeMillis)}",
+            text = stringResource(R.string.current_intake_template, volumeUnit.convertMillisToUnitString(currentIntakeMillis)),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
@@ -61,7 +63,7 @@ fun DailyIntakeProgress(
 
         // Percentage Text Below Progress Bar
         Text(
-            text = "${(progress * 100).toInt()}% of Goal Achieved",
+            text = stringResource(R.string.daily_progress_template, (progress * 100).toInt()),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )

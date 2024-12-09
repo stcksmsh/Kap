@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.loadAppSettings
 import io.github.stcksmsh.kap.data.loadUserSettings
@@ -24,6 +25,7 @@ import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
 import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
@@ -104,7 +106,7 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
 
 
         Text(
-            text = "Startup Animation",
+            text = stringResource(R.string.startup_animation),
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
                 .padding(12.dp)
@@ -113,7 +115,7 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
         )
         Row {
             Text(
-                text = if (startupAnimationEnabledInput) "Enabled" else "Disabled",
+                text = if (startupAnimationEnabledInput) stringResource(R.string.enabled) else stringResource(R.string.disabled),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier

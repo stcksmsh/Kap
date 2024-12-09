@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
@@ -31,6 +32,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import io.github.stcksmsh.kap.R
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.loadAppSettings
@@ -47,14 +49,26 @@ private const val TAG = "InsightsScreen"
 fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepository) {
 
     // State to hold selected filter
-    var selectedFilter by remember { mutableStateOf("Last Week") }
+    val filterOptions = listOf(
+        context.getString(R.string.last_week),
+        context.getString(R.string.last_month),
+        context.getString(R.string.last_year)
+    )
+
+    var selectedFilter by remember { mutableStateOf(filterOptions[0]) }
 
     val userData = loadUserSettings(context)
 
     val appSettings = loadAppSettings(context)
 
     // Fetch water intake data based on the selected filter
-    val startAndEndDate by remember { derivedStateOf { getDateRangeForFilter(selectedFilter) } }
+    val startAndEndDate by remember {
+        derivedStateOf {
+            getDateRangeForFilterIndex(
+                filterOptions.indexOf(selectedFilter)
+            )
+        }
+    }
 
     val waterIntakeData by waterIntakeRepository.getWaterIntakesBetween(
         startAndEndDate.first, startAndEndDate.second
@@ -72,12 +86,17 @@ fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            listOf("Last Week", "Last Month", "Last Year").forEach { filter ->
+            listOf(
+                stringResource(R.string.last_week),
+                stringResource(R.string.last_month),
+                stringResource(R.string.last_year)
+
+            ).forEach { filter ->
                 FilterChip(
                     selected = selectedFilter == filter,
                     onClick = { selectedFilter = filter },
                     label = { Text(filter) },
-                    enabled = (filter == "Last Week")
+                    enabled = (filter == stringResource(R.string.last_week))
                 )
             }
         }
@@ -114,7 +133,7 @@ fun InsightsScreen(context: Context, waterIntakeRepository: WaterIntakeRepositor
     }
 }
 
-fun getDateRangeForFilter(filter: String): Pair<Date, Date> {
+fun getDateRangeForFilterIndex(filterIndex: Int): Pair<Date, Date> {
     val calendar = Calendar.getInstance()
     calendar.set(Calendar.HOUR_OF_DAY, 0)
     calendar.set(Calendar.MINUTE, 0)
@@ -124,11 +143,11 @@ fun getDateRangeForFilter(filter: String): Pair<Date, Date> {
     calendar.add(Calendar.DAY_OF_YEAR, 1) // Start from tomorrow
     val endDate = calendar.time // Inclusive today at midnight
 
-    when (filter) {
-        "Last Week" -> calendar.add(Calendar.DAY_OF_YEAR, -7)
-        "Last Month" -> calendar.add(Calendar.MONTH, -1)
-        "Last Year" -> calendar.add(Calendar.YEAR, -1)
-        else -> Log.e(TAG, "Invalid filter: $filter")
+    when (filterIndex) {
+        0 -> calendar.add(Calendar.DAY_OF_YEAR, -7)
+        1 -> calendar.add(Calendar.MONTH, -1)
+        2 -> calendar.add(Calendar.YEAR, -1)
+        else -> Log.e(TAG, "Invalid filterIndex: $filterIndex")
     }
 
     val startDate = calendar.time

@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun NavigationDrawerContent(
@@ -29,7 +31,7 @@ fun NavigationDrawerContent(
             contentAlignment = Alignment.CenterStart
         ) {
             Text(
-                text = "Menu",
+                text = stringResource(R.string.menu),
                 color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -49,14 +51,22 @@ fun NavigationDrawerContent(
             verticalArrangement = Arrangement.spacedBy(12.dp), // Consistent spacing
             horizontalAlignment = Alignment.Start
         ) {
-            val menuItems = listOf("Home", "Insights", "Settings", "Reminders", "Support me")
+            val menuItemDestinations = listOf("Home", "Insights", "Settings", "Reminders", "Support me")
+
+            val menuItems = listOf(
+                stringResource(R.string.home_screen_title),
+                stringResource(R.string.insights_screen_title),
+                stringResource(R.string.settings_screen_title),
+                stringResource(R.string.reminders_screen_title),
+                stringResource(R.string.support_me_screen_title)
+            )
             menuItems.forEachIndexed { index, menuItem ->
                 Column {
                     // Menu Item
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onMenuItemClicked(menuItem) }
+                            .clickable { onMenuItemClicked(menuItemDestinations[index]) }
                             .padding(vertical = 15.dp) // Padding inside each box
                     ) {
                         Text(
@@ -80,7 +90,7 @@ fun NavigationDrawerContent(
 
             // Footer Section
             Text(
-                text = "© 2024 Kap by Kosta Vukićević",
+                text = stringResource(R.string.trade_mark),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.align(Alignment.CenterHorizontally)

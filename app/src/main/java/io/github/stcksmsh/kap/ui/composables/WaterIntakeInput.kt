@@ -11,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
@@ -18,6 +19,7 @@ import io.github.stcksmsh.kap.data.loadAppSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun WaterIntakeInput(
@@ -42,7 +44,7 @@ fun WaterIntakeInput(
     ) {
         items(volumes) { volume ->
             if (volume == -1.0f) {
-                Text("Custom")
+                Text(stringResource(R.string.custom))
             } else {
                 Button(
                     onClick = {

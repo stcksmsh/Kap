@@ -1,0 +1,89 @@
+<resources>
+    <string name="app_name">Kap</string>
+
+    <!-- Initial setup screen -->
+    <string name="save">Sačuvaj</string>
+
+    <!-- Home screen -->
+    <string name="home_screen_title">Početna</string>
+
+    <!-- Insights screen -->
+    <string name="insights_screen_title">Uvidi</string>
+    <string name="last_week">Prošla nedelja</string>
+    <string name="last_month">Prošli mesec</string>
+    <string name="last_year">Prošla godina</string>
+
+    <!-- Settings screen -->
+    <string name="settings_screen_title">Podešavanja</string>
+    <string name="startup_animation">Animacija pri pokretanju</string>
+    <string name="enabled">Omogućeno</string>
+    <string name="disabled">Onemogućeno</string>
+
+    <!-- Reminders screen -->
+    <string name="reminders_screen_title">Podsetnici</string>
+    <string name="enable_reminders">Omogući podsetnike</string>
+    <string name="enable_vibration">Omogući vibraciju</string>
+    <string name="enable_sound">Omogući zvuk</string>
+    <string name="start_of_day">Početak dana</string>
+    <string name="end_of_day">Kraj dana</string>
+    <string name="remind_me_every">Podsećaj me svakih</string>
+    <string name="send_notification_debug">Pošalji obaveštenje</string>
+
+    <!-- Support me screen -->
+    <string name="support_me_screen_title">Podrži me</string>
+    <string name="support_the_developer">Podrži programera</string>
+    <string name="thank_you_how_to_help">Hvala što koristiš aplikaciju! Ako želiš da me podržiš, evo kako možeš pomoći:</string>
+    <string name="donate">Doniraj</string>
+    <string name="share_app">Podeli aplikaciju</string>
+    <string name="follow_me">Prati me na društvenim mrežama</string>
+    <string name="share_message_template">Ćao! Koristim ovu aplikaciju pod nazivom KAP za praćenje unosa vode. 🥤
+        Veoma je jednostavna i pomaže mi da ostanem hidriran.
+
+        Pogledaj ovde: %1$s
+        Imaš pitanja? Slobodno me pitaj!</string>
+    <string name="google_play_url">[link do Google Play-a]</string>
+    <string name="share_app_with">Podeli KAP sa:</string>
+
+    <!-- Composable -->
+    <string name="quick_addition_volumes">Brzi dodaci količina</string>
+    <string name="quick_addition_volumes_description">Količine vode koje se mogu dodati jednim dodirom, takođe se koriste u vidžetu.</string>
+    <string name="daily_progress_template">%1$d%% cilja postignuto</string>
+    <string name="daily_goal_template">Dnevni cilj: %1$s</string>
+    <string name="current_intake_template">Trenutni unos: %1$s</string>
+    <string name="information">Informacije</string>
+    <string name="close">Zatvori</string>
+    <string name="menu">Meni</string>
+    <string name="units">Jedinice</string>
+    <string name="user_information">Informacije o korisniku</string>
+    <string name="age">Godine</string>
+    <string name="weight">Težina</string>
+    <string name="daily_physical_activity">Dnevna fizička aktivnost (min)</string>
+    <string name="daily_water_intake_goal">Dnevni unos vode</string>
+    <string name="calculate">Izračunaj</string>
+    <string name="custom">Prilagođeno</string>
+    <string name="enter_custom_amount">Unesi prilagođenu količinu</string>
+    <string name="amount_template">Količina (%1$s)</string>
+    <string name="add">Dodaj</string>
+    <string name="cancel">Otkaži</string>
+    <string name="delete">Obriši</string>
+    <string name="today">Danas</string>
+    <string name="yesterday">Juče</string>
+
+    <!-- Units -->
+    <string name="milliliters">ml</string>
+    <string name="liters">L</string>
+    <string name="ounces">oz</string>
+    <string name="cups">čaša</string>
+    <string name="pints">pt</string>
+    <string name="gallons">gal</string>
+    <string name="kilograms">kg</string>
+    <string name="pounds">lbs</string>
+    <string name="stone">st</string>
+
+    <!-- Widget -->
+    <string name="open_app_to_configure">Otvorite aplikaciju da biste konfigurisali vidžet</string>
+    <string name="water_intake">Unos vode</string>
+    <string name="great_job">Svaka čast! Postigli ste cilj!</string>
+    <string name="keep_it_up">Ostani hidriran! Samo još malo!</string>
+
+</resources>

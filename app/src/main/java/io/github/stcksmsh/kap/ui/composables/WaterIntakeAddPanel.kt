@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.WaterIntake
@@ -23,6 +24,8 @@ import io.github.stcksmsh.kap.model.AppSettings
 import io.github.stcksmsh.kap.model.VolumeUnits
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import io.github.stcksmsh.kap.R
+
 
 @Composable
 fun WaterIntakeAddPanel(
@@ -121,7 +124,7 @@ private fun CustomWaterIntakeAddButton(
         modifier = modifier
     ) {
         Text(
-            text = "Custom",
+            text = stringResource(R.string.custom),
             maxLines = 1
         )
     }
@@ -156,14 +159,14 @@ fun CustomAmountDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Enter Custom Amount")
+            Text(stringResource(R.string.enter_custom_amount))
         },
         text = {
             Column {
                 OutlinedTextField(
                     value = customAmount,
                     onValueChange = { customAmount = it },
-                    label = { Text("Amount (${selectedVolumeUnits.symbol})") },
+                    label = { Text(stringResource(R.string.amount_template, selectedVolumeUnits.getLocalizedSymbol())) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -178,12 +181,12 @@ fun CustomAmountDialog(
                     }
                 }
             ) {
-                Text("Add")
+                Text(stringResource(R.string.add))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

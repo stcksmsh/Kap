@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +34,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun WaterIntakeList(
@@ -107,7 +109,7 @@ private fun WaterIntakeRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.delete),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -123,8 +125,8 @@ private fun FormattedDateTime(
     val dateTime = LocalDateTime.ofInstant(instant, zoneId)
 
     val formattedDate = when {
-        dateTime.toLocalDate().isEqual(now.toLocalDate()) -> "Today"
-        dateTime.toLocalDate().isEqual(now.minusDays(1).toLocalDate()) -> "Yesterday"
+        dateTime.toLocalDate().isEqual(now.toLocalDate()) -> stringResource(R.string.today)
+        dateTime.toLocalDate().isEqual(now.minusDays(1).toLocalDate()) -> stringResource(R.string.yesterday)
         dateTime.isAfter(now.minusDays(7)) -> dateTime.format(DateTimeFormatter.ofPattern("EEEE"))
         else -> dateTime.format(DateTimeFormatter.ofPattern("yyyy.MM.dd."))
     }

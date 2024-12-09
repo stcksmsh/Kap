@@ -6,11 +6,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import io.github.stcksmsh.kap.data.calculateOptimalWaterIntake
 import io.github.stcksmsh.kap.model.VolumeUnits
 import io.github.stcksmsh.kap.model.WeightUnits
+import io.github.stcksmsh.kap.R
 
 @Composable
 fun UserSettingsInput(
@@ -83,7 +85,7 @@ fun UserSettingsInput(
         Column {
 
             Text(
-                text = "User Information",
+                text = stringResource(R.string.user_information),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .padding(12.dp)
@@ -106,7 +108,7 @@ fun UserSettingsInput(
                 },
                 label = {
                     Text(
-                        "Age",
+                        stringResource(R.string.age),
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -128,7 +130,7 @@ fun UserSettingsInput(
                 },
                 label = {
                     Text(
-                        "Weight",
+                        stringResource(R.string.weight),
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -152,7 +154,7 @@ fun UserSettingsInput(
                 },
                 label = {
                     Text(
-                        "Daily Physical Activity (min)",
+                        stringResource(R.string.daily_physical_activity),
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -175,7 +177,7 @@ fun UserSettingsInput(
                 },
                 label = {
                     Text(
-                        "Daily water intake goal",
+                        stringResource(R.string.daily_water_intake_goal),
                     )
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -190,7 +192,7 @@ fun UserSettingsInput(
                     .padding(bottom = 16.dp)
                     .align(Alignment.CenterHorizontally)
             ) {
-                Text("Calculate")
+                Text(stringResource(R.string.calculate))
             }
         }
     }

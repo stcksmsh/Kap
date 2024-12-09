@@ -6,13 +6,15 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.github.stcksmsh.kap.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopNavBar(
     onMenuClick: () -> Unit, // Callback for burger menu
-    title: String = "Home", // Title of the screen
+    title: String, // Title of the screen
     modifier: Modifier = Modifier
 ) {
     TopAppBar(
@@ -27,7 +29,7 @@ fun TopNavBar(
             IconButton(onClick = onMenuClick) {
                 Icon(
                     imageVector = Icons.Default.Menu,
-                    contentDescription = "Menu",
+                    contentDescription = stringResource(R.string.menu),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
