@@ -84,9 +84,7 @@ class DailySchedulerWorker(context: Context, params: WorkerParameters) : Worker(
                 delay,
                 TimeUnit.MILLISECONDS
             ) // Run again in 24 hours
-                .setExpedited(
-                    OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST
-                )
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInputData(inputData) // Pass the same reminder settings
                 .addTag(ReminderScheduler.NOTIFICATION_TAG).build()
 

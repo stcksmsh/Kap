@@ -19,7 +19,6 @@ object ReminderScheduler {
         }
 
         val constraints = Constraints.Builder()
-            .setRequiresBatteryNotLow(false) // Optional constraints
             .build()
 
 

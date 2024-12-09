@@ -49,10 +49,37 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         )
     }
 
-    val requestPermissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        hasNotificationPermission = isGranted
+    var hasIgnoreBatteryOptimizationsPermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else true
+        )
+    }
+
+    val requiredPermissions = if(hasNotificationPermission) emptyArray<String>() else arrayOf(
+        android.Manifest.permission.POST_NOTIFICATIONS, // Example permission
+        android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS // Add more as needed
+    )
+
+
+    val requestPermissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissionsResult ->
+        permissionsResult.forEach { (permission, isGranted) ->
+            when (permission) {
+                android.Manifest.permission.POST_NOTIFICATIONS -> {
+                    hasNotificationPermission = isGranted
+                }
+                android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+                    hasIgnoreBatteryOptimizationsPermission = isGranted
+                }
+                // Handle other permissions here
+            }
+        }
     }
 
     LaunchedEffect(
@@ -97,8 +124,8 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
             label = "Enable reminders",
             isEnabled = remindersEnabled && hasNotificationPermission,
             onToggle = { newCheckedState ->
-                if (!hasNotificationPermission) {
-                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                if(!hasNotificationPermission || !hasIgnoreBatteryOptimizationsPermission) {
+                    requestPermissionsLauncher.launch(requiredPermissions)
                 }
                 remindersEnabled = newCheckedState
             }
