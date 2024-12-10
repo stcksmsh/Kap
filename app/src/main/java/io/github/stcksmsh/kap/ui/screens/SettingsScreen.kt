@@ -24,7 +24,6 @@ import io.github.stcksmsh.kap.model.UserSettings
 import io.github.stcksmsh.kap.ui.composables.QuickWaterAdditionVolumesInput
 import io.github.stcksmsh.kap.ui.composables.UnitsInput
 import io.github.stcksmsh.kap.ui.composables.UserSettingsInput
-import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
 import io.github.stcksmsh.kap.R
 
 @Composable
@@ -73,10 +72,6 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
                 startupAnimationEnabled = startupAnimationEnabledInput
             )
         )
-    }
-
-    LaunchedEffect(selectedVolumeUnitInput, quickWaterAdditionVolumesInput, dailyWaterGoalInput) {
-        updateWaterIntakeWidgetState(context)
     }
 
     Column(

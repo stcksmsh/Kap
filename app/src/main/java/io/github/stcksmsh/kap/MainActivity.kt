@@ -38,11 +38,21 @@ import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
 import io.github.stcksmsh.kap.ui.theme.AppTheme
 import io.github.stcksmsh.kap.widget.updateWaterIntakeWidgetState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    override fun onStop() {
+        super.onStop()
+        val context = this
+        CoroutineScope(Dispatchers.IO).launch{
+            updateWaterIntakeWidgetState(context)
+        }
+    }
 
     lateinit var waterIntakeRepository: WaterIntakeRepository
         private set
@@ -81,9 +91,7 @@ class MainActivity : ComponentActivity() {
                 else -> "home"
             }
             LaunchedEffect(Unit) {
-                coroutineScope.launch {
-                    updateWaterIntakeWidgetState(context)
-                }
+                updateWaterIntakeWidgetState(context)
             }
 
 
