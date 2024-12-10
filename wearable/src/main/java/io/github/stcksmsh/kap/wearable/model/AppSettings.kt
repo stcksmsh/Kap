@@ -1,11 +1,11 @@
-package io.github.stcksmsh.kap.model
+package io.github.stcksmsh.kap.wearable.model
 
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import java.math.BigDecimal
 import java.math.RoundingMode
-import io.github.stcksmsh.kap.R
+import io.github.stcksmsh.kap.wearable.R
 
 enum class WeightUnits(
     val kilograms: Float,

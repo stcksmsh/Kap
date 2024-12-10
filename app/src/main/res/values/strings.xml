@@ -82,6 +82,7 @@
     <string name="kilograms">kg</string>
     <string name="pounds">lbs</string>
     <string name="stone">st</string>
+    <string name="cups">cups</string>
 
 
     <!-- Widget -->
@@ -92,6 +93,5 @@
 
 
     <string name="trade_mark" translatable="false">© 2024 Kap by Kosta Vukićević</string>
-    <string name="cups">cups</string>
 
 </resources>

@@ -53,4 +53,5 @@ dependencies {
     implementation(libs.androidx.ui.graphics.android)
     implementation(libs.androidx.activity)
 
+    implementation(libs.play.services.wearable)
 }

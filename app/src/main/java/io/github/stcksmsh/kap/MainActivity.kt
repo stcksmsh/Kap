@@ -2,6 +2,7 @@ package io.github.stcksmsh.kap
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -24,10 +25,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.wearable.Wearable
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserSettings
 import io.github.stcksmsh.kap.data.loadAppSettings
+import io.github.stcksmsh.kap.sync.DataLayerPaths
+import io.github.stcksmsh.kap.sync.sendSettingsData
+import io.github.stcksmsh.kap.sync.sendWaterIntakeUpdate
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
@@ -57,6 +62,8 @@ class MainActivity : ComponentActivity() {
 
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
 
+        sendSettingsData(this, loadAppSettings(this))
+        sendWaterIntakeUpdate(this, 100f, 200f)
 
         setContent {
             val navController = rememberNavController()

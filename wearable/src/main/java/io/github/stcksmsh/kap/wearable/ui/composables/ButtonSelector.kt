@@ -68,10 +68,11 @@ fun CircularCurvedButtonSelector(
     }
 }
 
+
 @Composable
 fun CircularScrollableRow(
     buttonLabels: List<String>,
-    onButtonClick: (String) -> Unit
+    onButtonClick: (Int) -> Unit
 ) {
     // Create an infinite scrolling list of buttons
     val infiniteLabels = remember { generateInfiniteList(buttonLabels) }
@@ -91,7 +92,9 @@ fun CircularScrollableRow(
         ) {
             itemsIndexed(infiniteLabels) { index, label ->
                 Button(
-                    onClick = { onButtonClick(label) },
+                    onClick = {
+                        Log.d("HydrationStatus", "Button clicked: $index, value: $label")
+                        onButtonClick(index % buttonLabels.size) },
                     modifier = Modifier
                         .padding(8.dp)
                         .scale(
@@ -111,7 +114,6 @@ fun CircularScrollableRow(
     LaunchedEffect(listState) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { currentIndex ->
-                Log.d("CircularScrollableRow", "Current index: $currentIndex")
                 if (currentIndex <= 1) {
                     // Scroll to the middle when reaching the start
                     coroutineScope.launch {
@@ -126,6 +128,7 @@ fun CircularScrollableRow(
             }
     }
 }
+
 
 fun <T> generateInfiniteList(inputList: List<T>): List<T> {
     val listSize = inputList.size * 4

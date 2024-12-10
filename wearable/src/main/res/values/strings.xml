@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Kap</string>
+
+    <!-- Units -->
+    <string name="milliliters">ml</string>
+    <string name="liters">L</string>
+    <string name="ounces">oz</string>
+    <string name="pints">pt</string>
+    <string name="gallons">gal</string>
+    <string name="kilograms">kg</string>
+    <string name="pounds">lbs</string>
+    <string name="stone">st</string>
+    <string name="cups">cups</string>
+
 </resources>
