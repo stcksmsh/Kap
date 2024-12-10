@@ -11,6 +11,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.*
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.LinearProgressIndicator
@@ -23,6 +25,7 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import io.github.stcksmsh.kap.MainActivity
 import io.github.stcksmsh.kap.data.*
 import io.github.stcksmsh.kap.R
 import io.github.stcksmsh.kap.model.VolumeUnits
@@ -86,7 +89,8 @@ fun WidgetLayout(
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(GlanceTheme.colors.background)
-                .padding(20.dp), // Increased padding for overall spacing
+                .padding(8.dp)
+                .clickable(actionStartActivity(MainActivity::class.java)),
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally
         ) {
             // Title Section
@@ -114,7 +118,7 @@ fun WidgetLayout(
             // Button Section
             AddWaterButtonGroup(context, quickAddVolumes, volumeUnit)
 
-            Spacer(modifier = GlanceModifier.height(16.dp)) // Extra spacing before motivational text
+            Spacer(modifier = GlanceModifier.height(8.dp)) // Extra spacing before motivational text
 
             // Motivational Text
             Text(
@@ -188,12 +192,12 @@ fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Float>, volumeUn
                 modifier = GlanceModifier
                     .padding(4.dp) // Spacing around each button
                     .background(GlanceTheme.colors.primaryContainer)
-                    .height(40.dp) // Consistent button height
+                    .height(50.dp) // Consistent button height
                     .defaultWeight() // Evenly distribute button space
             )
-            // Add spacing between buttons except the last one
+//            // Add spacing between buttons except the last one
             if (index < quickAddVolumes.size - 1) {
-                Spacer(modifier = GlanceModifier.width(8.dp))
+                Spacer(modifier = GlanceModifier.width(4.dp))
             }
         }
     }
