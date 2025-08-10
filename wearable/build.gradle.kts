@@ -51,7 +51,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.runtime)
     implementation(libs.androidx.ui.graphics.android)
-    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.core)
 
     implementation(libs.play.services.wearable)
 }

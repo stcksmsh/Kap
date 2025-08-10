@@ -1,95 +1,95 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("com.google.devtools.ksp")
+    // If you have a version-catalog alias for KSP, use: alias(libs.plugins.ksp)
+    id("com.google.devtools.ksp") // ensure version is declared in the root plugins block or via catalog
     alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "io.github.stcksmsh.kap"
-    compileSdk = 35
-
-    android.buildFeatures.buildConfig = true
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "io.github.stcksmsh.kap"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
-    }
-
+    // Use Java 17 across the board
     compileOptions {
-        // Ensure consistency with Kotlin JVM target
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(11))
+            languageVersion.set(JavaLanguageVersion.of(17))
         }
     }
 }
 
 dependencies {
-    implementation(libs.androidx.cardview)
-    val composeVersion = "1.5.3"
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.activity.core)
+    implementation(libs.material)
 
-    // Compose dependencies
+    // Compose app
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
-    implementation("androidx.compose.ui:ui:$composeVersion")
-    implementation("androidx.compose.ui:ui-tooling-preview:$composeVersion")
-    implementation("androidx.compose.runtime:runtime:$composeVersion")
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.runtime)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.work.runtime.ktx)
 
+    // Debug tooling (use app ui-tooling, not wear tooling)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Work / Paging
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.runtime)
-    implementation(libs.paging.compose)
-    // Vico chart library
+
+    // Room (KSP)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
+    ksp(libs.androidx.room.compiler)
+
+    // Health Connect
+    implementation(libs.androidx.health.connect.client)
+
+    // Wear
+    implementation(libs.androidx.wear)
+    implementation(libs.androidx.tiles)
+    implementation(libs.play.services.wearable)
+
+    // Glance
+    implementation(libs.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
+
+    // Charts
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
     implementation(libs.vico.core)
     implementation(libs.vico.views)
 
+    // CardView (if still used anywhere)
+    implementation(libs.androidx.cardview)
 
-    // wearable
-    implementation(libs.androidx.wear)
-    implementation(libs.androidx.tiles)
-    implementation(libs.play.services.wearable)
-    
-    // Debugging tools
-    debugImplementation("androidx.compose.ui:ui-tooling:$composeVersion")
-
-    // Glance library
-    implementation(libs.glance.appwidget)
-    implementation(libs.androidx.glance.material3)
-
-    // Room dependencies
-    val roomVersion = "2.5.2" // Replace with the latest Room version
-    implementation(libs.androidx.room.runtime)
-    implementation("androidx.room:room-paging:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    ksp("androidx.room:room-paging:$roomVersion")
-
-    // Optional - for Kotlin coroutines support
-    implementation(libs.androidx.room.ktx)
-
-    // Testing dependencies
+    // Tests
     testImplementation(libs.junit)
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
 }

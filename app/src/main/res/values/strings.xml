@@ -18,6 +18,16 @@
     <string name="startup_animation">Startup Animation</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <!-- Health connect -->
+    <string name="health_connect_description">Sync with Google Health Connect</string>
+    <string name="health_connect_SDK_UNAVAILABLE">This device does not support Health Connect.</string>
+    <string name="health_connect_SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED">Health Connect should be installed or updated.</string>
+    <string name="health_connect_SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED_enable_install">Install / Enable</string>
+    <string name="health_connect_SDK_AVAILABLE">Enable Health Connect for KAP hydration synchronization</string>
+    <string name="health_connect_CONNECTED">Connected ✓ KAP can read/write hydration data.</string>
+    <string name="health_connect_connect">Connect</string>
+    <string name="health_connect_error">Error %1s</string>
+
 
     <!--  Reminders screen  -->
     <string name="reminders_screen_title">Reminders</string>

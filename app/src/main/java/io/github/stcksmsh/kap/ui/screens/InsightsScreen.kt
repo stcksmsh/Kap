@@ -1,5 +1,6 @@
 package io.github.stcksmsh.kap.ui.screens
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -31,7 +32,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.AreaFil
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.Fill
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shader.LinearGradientShaderProvider
 import io.github.stcksmsh.kap.R
 import io.github.stcksmsh.kap.data.WaterIntake
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
@@ -164,7 +165,7 @@ fun WaterIntakeGraph(
     // Generate list of dates from start to end date
     val correctedData = remember(startDate, correctedEndDate, data) {
         groupData(data.groupBy { getDateWithoutTime(it.date) }.map {
-            WaterIntake(intakeAmount = it.value.map { it.intakeAmount }.sum(), date = it.key)
+            WaterIntake(intakeAmount = it.value.sumOf { it.intakeAmount }, date = it.key)
         }, startDate, correctedEndDate
         )
     }
@@ -190,6 +191,30 @@ fun WaterIntakeGraph(
         }
     }
 
+    @SuppressLint("RestrictedApi")
+    val topAreaShader = remember(colors) {
+        LinearGradientShaderProvider(
+            colors = intArrayOf(
+                colors[0].copy(alpha = 0.2f).toArgb(),
+                colors[0].copy(alpha = 0.7f).toArgb()
+            ),
+            positions = floatArrayOf(0f, 1f),
+            isHorizontal = false
+        )
+    }
+
+    @SuppressLint("RestrictedApi")
+    val bottomAreaShader = remember(colors) {
+        LinearGradientShaderProvider(
+            colors = intArrayOf(
+                colors[1].copy(alpha = 0.7f).toArgb(),
+                colors[1].copy(alpha = 0.2f).toArgb()
+            ),
+            positions = floatArrayOf(0f, 1f),
+            isHorizontal = false
+        )
+    }
+
     // Cartesian Chart with formatted X-axis
     CartesianChartHost(
         chart = rememberCartesianChart(
@@ -206,16 +231,10 @@ fun WaterIntakeGraph(
                                 splitY = { dailyWaterGoal })
                         }, areaFill = double(
                             topFill = Fill(
-                                DynamicShader.verticalGradient(
-                                    colors[0].copy(alpha = 0.2f).toArgb(),
-                                    colors[0].copy(alpha = 0.7f).toArgb(),
-                                )
+                                topAreaShader
                             ),
                             bottomFill = Fill(
-                                DynamicShader.verticalGradient(
-                                    colors[1].copy(alpha = 0.7f).toArgb(),
-                                    colors[1].copy(alpha = 0.2f).toArgb(),
-                                )
+                                bottomAreaShader
                             ),
                             splitY = { dailyWaterGoal },
                         )
@@ -274,7 +293,7 @@ private fun groupData(
             val dates = (0..days).map { Date(startDate.time + (it * 24 * 60 * 60 * 1000)) }
             return dates.map { date ->
                 WaterIntake(intakeAmount = waterIntakeData.filter { getDateWithoutTime(it.date) == date }
-                    .map { it.intakeAmount }.sum(), date = date
+                    .sumOf { it.intakeAmount }, date = date
                 )
             }
         }
@@ -307,7 +326,7 @@ private fun groupData(
                         time = getDateWithoutTime(it.date)
                         set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
                     }.time == date
-                }.map { it.intakeAmount }.sum(), date = date
+                }.sumOf { it.intakeAmount }, date = date
                 )
             }
         }
@@ -339,7 +358,7 @@ private fun groupData(
                         time = getDateWithoutTime(it.date)
                         set(Calendar.DAY_OF_MONTH, 1)
                     }.time == date
-                }.map { it.intakeAmount }.sum(), date = date
+                }.sumOf { it.intakeAmount }, date = date
                 )
             }
         }

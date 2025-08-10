@@ -18,6 +18,7 @@
     <string name="startup_animation">Animacija pri pokretanju</string>
     <string name="enabled">Omogućeno</string>
     <string name="disabled">Onemogućeno</string>
+    <string name="health_connect_description">Sinhronizuj sa Google Health Connect-om</string>
 
     <!-- Reminders screen -->
     <string name="reminders_screen_title">Podsetnici</string>
