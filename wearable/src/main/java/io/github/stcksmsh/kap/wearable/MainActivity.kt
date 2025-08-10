@@ -104,13 +104,13 @@ fun HydrationStatus(
         Text(text = "Hydration Goal", style = MaterialTheme.typography.title2)
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "${selectedVolumeUnit.convertMillisToString(currentIntake)} / ${selectedVolumeUnit.convertMillisToUnitString(hydrationGoal)}",
+            text = "${selectedVolumeUnit.convertMillisToString(currentIntake)} / ${selectedVolumeUnit.toUnitWithLabel(hydrationGoal)}",
             style = MaterialTheme.typography.body2
         )
 
         Spacer(modifier = Modifier.height(16.dp))
         CircularScrollableRow(
-            buttonLabels = quickAdditionVolumes.map { selectedVolumeUnit.convertMillisToUnitString(it) },
+            buttonLabels = quickAdditionVolumes.map { selectedVolumeUnit.toUnitWithLabel(it) },
         ) { index ->
             onIntakeAdd(quickAdditionVolumes[index])
         }

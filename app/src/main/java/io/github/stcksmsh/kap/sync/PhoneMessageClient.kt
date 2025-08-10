@@ -6,7 +6,7 @@ import com.google.android.gms.wearable.Wearable
 
 private const val TAG = "PhoneMessageClient"
 
-fun sendWaterIntakeUpdate(context: Context, intakeAmount: Float, dailyIntake: Float) {
+fun sendWaterIntakeUpdate(context: Context, intakeAmount: Double, dailyIntake: Double) {
     val messageClient = Wearable.getMessageClient(context)
 
     val message = "$intakeAmount/$dailyIntake".toByteArray()

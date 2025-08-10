@@ -19,40 +19,28 @@ fun NavigationDrawerContent(
     Column(
         modifier = modifier
             .fillMaxHeight()
-            .width(230.dp) // Set fixed width for the drawer
-            .background(MaterialTheme.colorScheme.surface) // Drawer background color
+            .width(230.dp)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
-        // Header Section with Primary Background
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp) // Standard TopAppBar height
-                .background(MaterialTheme.colorScheme.primary),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Text(
-                text = stringResource(R.string.menu),
-                color = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-        }
+        // Header: identical styling to the app bar
+        TopNavBar(
+            title = stringResource(R.string.menu),
+            onMenuClick = null // ← no burger inside the drawer
+        )
 
-        // Divider Below Header
         HorizontalDivider(
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             thickness = 1.dp
         )
 
-        // Menu Items
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp), // Padding around the menu items
-            verticalArrangement = Arrangement.spacedBy(12.dp), // Consistent spacing
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.Start
         ) {
             val menuItemDestinations = listOf("Home", "Insights", "Settings", "Reminders", "Support me")
-
             val menuItems = listOf(
                 stringResource(R.string.home_screen_title),
                 stringResource(R.string.insights_screen_title),
@@ -60,35 +48,32 @@ fun NavigationDrawerContent(
                 stringResource(R.string.reminders_screen_title),
                 stringResource(R.string.support_me_screen_title)
             )
-            menuItems.forEachIndexed { index, menuItem ->
+
+            menuItems.forEachIndexed { index, label ->
                 Column {
-                    // Menu Item
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { onMenuItemClicked(menuItemDestinations[index]) }
-                            .padding(vertical = 15.dp) // Padding inside each box
+                            .padding(vertical = 15.dp)
                     ) {
                         Text(
-                            text = menuItem,
+                            text = label,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(horizontal = 16.dp) // Horizontal padding for text
+                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
-
-                    // Divider Between Items, Except After the Last One
                     if (index != menuItems.lastIndex) {
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            thickness = 1.dp,
+                            thickness = 1.dp
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.weight(1f)) // Push footer to the bottom
+            Spacer(modifier = Modifier.weight(1f))
 
-            // Footer Section
             Text(
                 text = stringResource(R.string.trade_mark),
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),

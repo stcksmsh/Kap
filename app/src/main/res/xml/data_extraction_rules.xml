@@ -1,19 +1,36 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
-   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
--->
+<?xml version="1.0" encoding="utf-8"?>
 <data-extraction-rules>
+    <!-- Cloud backup to Google -->
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- SharedPreferences -->
+        <include domain="sharedpref" path="."/>       <!-- all prefs -->
+        <!-- DataStore (Preferences/Proto live under files/datastore) -->
+        <include domain="file" path="datastore/"/>
+        <!-- Room DB (hydration history) -->
+        <include domain="database" path="."/>         <!-- all DBs -->
+
+        <!-- EXCLUDES: re-creatable stuff -->
+        <exclude domain="file" path="no_backup/"/>    <!-- anything you put here is never backed up -->
+        <exclude domain="file" path="cache/"/>
+        <exclude domain="file" path="code_cache/"/>
+        <exclude domain="file" path="logs/"/>
+        <exclude domain="file" path="work/" />        <!-- WorkManager (if present) -->
+        <exclude domain="database" path=":wal"/>      <!-- Room/SQLite WAL & shm -->
+        <exclude domain="database" path=":shm"/>
     </cloud-backup>
-    <!--
+
+    <!-- Device-to-device / Nearby transfer (Pixel setup, etc.) -->
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <!-- Usually mirror cloud-backup so users get the same data when switching phones -->
+        <include domain="sharedpref" path="."/>
+        <include domain="file" path="datastore/"/>
+        <include domain="database" path="."/>
+        <exclude domain="file" path="no_backup/"/>
+        <exclude domain="file" path="cache/"/>
+        <exclude domain="file" path="code_cache/"/>
+        <exclude domain="file" path="logs/"/>
+        <exclude domain="file" path="work/"/>
+        <exclude domain="database" path=":wal"/>
+        <exclude domain="database" path=":shm"/>
     </device-transfer>
-    -->
 </data-extraction-rules>

@@ -28,6 +28,7 @@
     <string name="end_of_day">End of the day</string>
     <string name="remind_me_every">Remind me every</string>
     <string name="send_notification_debug">Send notification</string>
+    <string name="request_battery_optimizations_whitelist">Prevent battery saver from delaying reminders</string>
 
     <!--  Support me screen  -->
     <string name="support_me_screen_title">Support me</string>

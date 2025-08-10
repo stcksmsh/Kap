@@ -8,118 +8,74 @@ import java.math.RoundingMode
 import io.github.stcksmsh.kap.R
 
 enum class WeightUnits(
-    val kilograms: Float,
+    val kgFactor: Double,
     val decimals: Int,
+    @androidx.annotation.StringRes val labelRes: Int,
     val fullName: String
 ) {
-    KGS(1.0f, 0, "kilograms"),
-    POUNDS(0.453592f, 0, "pounds"),
-    STONE(6.35029f, 1, "stone");
+    KGS(1.0,       0, R.string.kilograms, "kilograms"),
+    POUNDS(0.45359237, 0, R.string.pounds,    "pounds"),
+    STONE(6.35029318,  1, R.string.stone,     "stone");
 
-    fun convertKilosToString(value: Float): String {
-        val scaledValue = value / kilograms
-        val roundedValue =
-            BigDecimal(scaledValue.toDouble()).setScale(decimals, RoundingMode.HALF_UP)
-        return roundedValue.stripTrailingZeros().toPlainString()
-    }
+    fun toUnitString(kilos: Double): String =
+        kilos.div(kgFactor).toBigDecimal().setScale(decimals, RoundingMode.HALF_UP)
+            .stripTrailingZeros().toPlainString()
 
-    fun convertStringToKilos(value: String): Float? {
-        return value.toFloatOrNull()?.times(kilograms)
-    }
+    fun fromUnitToKilos(value: String): Double? = value.toDoubleOrNull()?.times(kgFactor)
 
     @Composable
-    fun getLocalizedSymbol(): String {
-        return when (this) {
-            KGS -> stringResource(R.string.kilograms)
-            POUNDS -> stringResource(R.string.pounds)
-            STONE -> stringResource(R.string.stone)
-        }
-    }
+    fun label() = stringResource(labelRes)
 
-    // these exist because the widget doesn't have access to the Composable function, and it just throws `java.lang.IllegalStateException: CompositionLocal LocalConfiguration not present`
-
-    fun getLocalizedSymbol(context: Context): String{
-        return when (this) {
-            KGS -> context.getString(R.string.kilograms)
-            POUNDS -> context.getString(R.string.pounds)
-            STONE -> context.getString(R.string.stone)
-        }
-    }
-
+    fun label(context: Context) = context.getString(labelRes)
 }
+
 
 enum class VolumeUnits(
-    val milliliters: Float,
+    val mlFactor: Double,
     val decimals: Int,
+    @androidx.annotation.StringRes val labelRes: Int,
     val fullName: String
 ) {
-    MILLILITERS(1.0f, 0, "milliliters"),
-    LITERS(1000.0f, 2, "liters"),
-    OUNCES(29.5735f, 1, "ounces"),
-    CUPS(240.0f, 1, "cups"),
-    PINTS(473.176f, 2, "pints"),
-    GALLONS(3785.41f, 2, "gallons");
+    MILLILITERS(1.0,      0, R.string.milliliters, "milliliters"),
+    LITERS(1000.0,        2, R.string.liters,      "liters"),
+    OUNCES(29.5735295625, 1, R.string.ounces,      "ounces"), // US fl oz
+    CUPS(240.0,           1, R.string.cups,        "cups"),   // your chosen “cup”
+    PINTS(473.176473,     2, R.string.pints,       "pints"),
+    GALLONS(3785.411784,  2, R.string.gallons,     "gallons");
 
-    fun convertMillisToString(value: Float): String {
-        val scaledValue = value / milliliters
-        val roundedValue =
-            BigDecimal(scaledValue.toDouble()).setScale(decimals, RoundingMode.HALF_UP)
-        return roundedValue.stripTrailingZeros().toPlainString()
-    }
+    fun toUnitString(ml: Double): String =
+        (ml / mlFactor).toBigDecimal().setScale(decimals, RoundingMode.HALF_UP)
+            .stripTrailingZeros().toPlainString()
 
     @Composable
-    fun convertMillisToUnitString(value: Float): String {
-        return "${convertMillisToString(value)} ${getLocalizedSymbol()}"
-    }
+    fun toUnitWithLabel(ml: Double) =
+        "${toUnitString(ml)} ${stringResource(labelRes)}"
 
-    fun convertStringToMillis(value: String): Float? {
-        return value.toFloatOrNull()?.times(milliliters)
-    }
+    fun toUnitWithLabel(context: Context, ml: Double) =
+        "${toUnitString(ml)} ${context.getString(labelRes)}"
+
+    fun fromUnitToMl(value: String): Double? = value.toDoubleOrNull()?.times(mlFactor)
 
     @Composable
-    fun getLocalizedSymbol(): String {
-        return when (this) {
-            MILLILITERS -> stringResource(R.string.milliliters)
-            LITERS -> stringResource(R.string.liters)
-            OUNCES -> stringResource(R.string.ounces)
-            CUPS -> stringResource(R.string.cups)
-            PINTS -> stringResource(R.string.pints)
-            GALLONS -> stringResource(R.string.gallons)
-        }
-    }
+    fun label() = stringResource(labelRes)
 
-    // these exist because the widget doesn't have access to the Composable function, and it just throws `java.lang.IllegalStateException: CompositionLocal LocalConfiguration not present`
-
-    fun convertMillisToUnitString(context: Context, value: Float): String {
-        return "${convertMillisToString(value)} ${getLocalizedSymbol(context)}"
-    }
-
-    fun getLocalizedSymbol(context: Context): String{
-        return when (this) {
-            MILLILITERS -> context.getString(R.string.milliliters)
-            LITERS -> context.getString(R.string.liters)
-            OUNCES -> context.getString(R.string.ounces)
-            CUPS -> context.getString(R.string.cups)
-            PINTS -> context.getString(R.string.pints)
-            GALLONS -> context.getString(R.string.gallons)
-        }
-    }
-
+    fun label(context: Context) = context.getString(labelRes)
 }
+
 
 
 data class AppSettings(
     val startupAnimationEnabled: Boolean,
     val weightUnit: WeightUnits,
     val volumeUnit: VolumeUnits,
-    val quickWaterAdditionVolumes: List<Float>
+    val quickWaterAdditionVolumes: List<Double>
 ) {
     override fun toString(): String {
         return "$startupAnimationEnabled;${weightUnit.name};${volumeUnit.name};${quickWaterAdditionVolumes.joinToString(",")}"
     }
 
     companion object {
-        val defaultQuickWaterAdditionVolumes = listOf(100.0f, 250.0f, 500.0f, 750.0f, 1000.0f)
+        val defaultQuickWaterAdditionVolumes = listOf(100.0, 250.0, 500.0, 750.0, 1000.0)
 
         fun fromString(string: String): AppSettings {
             val parts = string.split(";")
@@ -130,7 +86,7 @@ data class AppSettings(
                 parts[0].toBoolean(),
                 WeightUnits.valueOf(parts[1]),
                 VolumeUnits.valueOf(parts[2]),
-                parts[3].split(",").map { it.toFloat() }
+                parts[3].split(",").map { it.toDouble() }
             )
         }
     }

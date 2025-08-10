@@ -19,13 +19,13 @@ fun UserSettingsInput(
     selectedWeightUnit: WeightUnits,
     selectedVolumeUnit: VolumeUnits,
     age: Int,
-    weight: Float,
+    weight: Double,
     dailyPhysicalActivity: Int,
-    dailyWaterGoal: Float,
+    dailyWaterGoal: Double,
     onAgeChanged: (Int) -> Unit,
-    onWeightChanged: (Float) -> Unit,
+    onWeightChanged: (Double) -> Unit,
     onDailyPhysicalActivityChanged: (Int) -> Unit,
-    onDailyWaterGoalChanged: (Float) -> Unit,
+    onDailyWaterGoalChanged: (Double) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -38,7 +38,7 @@ fun UserSettingsInput(
 
     var weightString by remember(weight) {
         mutableStateOf(
-            if (weight > 0f) selectedWeightUnit.convertKilosToString(weight)
+            if (weight > 0f) selectedWeightUnit.toUnitString(weight)
             else ""
         )
     }
@@ -52,7 +52,7 @@ fun UserSettingsInput(
 
     var dailyWaterGoalString by remember(dailyWaterGoal) {
         mutableStateOf(
-            if (dailyWaterGoal > 0f) selectedVolumeUnit.convertMillisToString(dailyWaterGoal)
+            if (dailyWaterGoal > 0f) selectedVolumeUnit.toUnitString(dailyWaterGoal)
             else ""
         )
     }
@@ -61,11 +61,11 @@ fun UserSettingsInput(
 
     // Validation checks
     val isAgeError by remember(ageString) { derivedStateOf { (ageString == "" && age != 0) || age > 120 } }
-    val isWeightError by remember(weightString) { derivedStateOf { (weightString == "" && weight != 0f) || weight > 500f} }
+    val isWeightError by remember(weightString) { derivedStateOf { (weightString == "" && weight != 0.0) || weight > 500f} }
 
     val isDailyPhysicalActivityError by remember(dailyPhysicalActivityString) { derivedStateOf { (dailyPhysicalActivityString == "" && dailyPhysicalActivity != -1) || dailyPhysicalActivity > 1440 } }
 
-    val isDailyWaterGoalError by remember(dailyWaterGoalString) { derivedStateOf { (dailyWaterGoalString == "" && dailyWaterGoal != 0f) || dailyWaterGoal > 10000f } }
+    val isDailyWaterGoalError by remember(dailyWaterGoalString) { derivedStateOf { (dailyWaterGoalString == "" && dailyWaterGoal != 0.0) || dailyWaterGoal > 10000f } }
 
     LaunchedEffect(age, weight, dailyPhysicalActivity, isDailyWaterGoalManuallySet) {
         if (!isDailyWaterGoalManuallySet) {
@@ -123,7 +123,7 @@ fun UserSettingsInput(
                         it, selectedWeightUnit.decimals
                     ) {
                         weightString = it
-                        selectedWeightUnit.convertStringToKilos(it)?.let {
+                        selectedWeightUnit.fromUnitToKilos(it)?.let {
                             onWeightChanged(it)
                         }
                     }
@@ -170,7 +170,7 @@ fun UserSettingsInput(
                     ) {
                         dailyWaterGoalString = it
                         isDailyWaterGoalManuallySet = true
-                        selectedVolumeUnit.convertStringToMillis(it)?.let {
+                        selectedVolumeUnit.fromUnitToMl(it)?.let {
                             onDailyWaterGoalChanged(it)
                         }
                     }

@@ -90,7 +90,7 @@ private fun WaterIntakeRow(
     ) {
         // Water intake amount
         Text(
-            text = selectedVolumeUnit.convertMillisToUnitString(waterIntake.intakeAmount),
+            text = selectedVolumeUnit.toUnitWithLabel(waterIntake.intakeAmount),
             fontSize = 18.sp,
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.weight(2f),

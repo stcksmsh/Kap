@@ -82,7 +82,7 @@ fun WaterIntakeAddPanel(
 @Composable
 private fun WaterIntakeAddButton(
     modifier: Modifier = Modifier,
-    waterAmount: Float,
+    waterAmount: Double,
     waterIntakeRepository: WaterIntakeRepository,
     coroutineScope: CoroutineScope,
     selectedVolumeUnits: VolumeUnits
@@ -100,7 +100,7 @@ private fun WaterIntakeAddButton(
         modifier = modifier
     ) {
         Text(
-            text = selectedVolumeUnits.convertMillisToUnitString(waterAmount),
+            text = selectedVolumeUnits.toUnitWithLabel(waterAmount),
             maxLines = 1
         )
     }
@@ -150,7 +150,7 @@ private fun CustomWaterIntakeAddButton(
 
 @Composable
 fun CustomAmountDialog(
-    onConfirm: (Float) -> Unit,
+    onConfirm: (Double) -> Unit,
     onDismiss: () -> Unit,
     selectedVolumeUnits: VolumeUnits
 ) {
@@ -166,7 +166,7 @@ fun CustomAmountDialog(
                 OutlinedTextField(
                     value = customAmount,
                     onValueChange = { customAmount = it },
-                    label = { Text(stringResource(R.string.amount_template, selectedVolumeUnits.getLocalizedSymbol())) },
+                    label = { Text(stringResource(R.string.amount_template, selectedVolumeUnits.label())) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -175,7 +175,7 @@ fun CustomAmountDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    val amount = customAmount.toFloatOrNull()
+                    val amount = customAmount.toDoubleOrNull()
                     if (amount != null && amount > 0) {
                         onConfirm(amount)
                     }

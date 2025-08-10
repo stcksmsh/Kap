@@ -2,7 +2,6 @@ package io.github.stcksmsh.kap
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -13,26 +12,25 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.wearable.Wearable
 import io.github.stcksmsh.kap.data.WaterIntakeDatabase
 import io.github.stcksmsh.kap.data.WaterIntakeRepository
 import io.github.stcksmsh.kap.data.hasUserSettings
 import io.github.stcksmsh.kap.data.loadAppSettings
-import io.github.stcksmsh.kap.sync.DataLayerPaths
-import io.github.stcksmsh.kap.sync.sendSettingsData
-import io.github.stcksmsh.kap.sync.sendWaterIntakeUpdate
 import io.github.stcksmsh.kap.ui.composables.NavigationDrawerContent
 import io.github.stcksmsh.kap.ui.composables.TopNavBar
 import io.github.stcksmsh.kap.ui.screens.*
@@ -49,7 +47,7 @@ class MainActivity : ComponentActivity() {
     override fun onStop() {
         super.onStop()
         val context = this
-        CoroutineScope(Dispatchers.IO).launch{
+        CoroutineScope(Dispatchers.IO).launch {
             updateWaterIntakeWidgetState(context)
         }
     }
@@ -67,13 +65,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         database = WaterIntakeDatabase.getDatabase(applicationContext)
-
         waterIntakeRepository = WaterIntakeRepository(database.waterIntakeDao())
-
-        sendSettingsData(this, loadAppSettings(this))
-        sendWaterIntakeUpdate(this, 100f, 200f)
 
         setContent {
             val navController = rememberNavController()
@@ -90,28 +83,40 @@ class MainActivity : ComponentActivity() {
                 showInputScreen -> "input"
                 else -> "home"
             }
-            LaunchedEffect(Unit) {
-                updateWaterIntakeWidgetState(context)
-            }
 
+            LaunchedEffect(Unit) { updateWaterIntakeWidgetState(context) }
 
             val animationDuration = 500
 
-            val navigationEnterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? =
-                {
-                    slideInHorizontally(
-                        initialOffsetX = { -1000 }, animationSpec = tween(animationDuration)
-                    ) + fadeIn(animationSpec = tween(animationDuration))
-                }
+            // Disable ALL transitions when leaving the splash to avoid flicker
+            val navigationEnterTransition:
+                    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = {
+                val from = initialState.destination.route
+                if (from == "animation") EnterTransition.None
+                else slideInHorizontally(initialOffsetX =  { -1000 }, animationSpec = tween(animationDuration)) + fadeIn(tween(animationDuration))
+            }
 
-            val navigationExitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? =
-                {
-                    slideOutHorizontally(
-                        targetOffsetX = { 1000 }, animationSpec = tween(animationDuration)
-                    ) + fadeOut(animationSpec = tween(animationDuration))
-                }
+            val navigationExitTransition:
+                    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = {
+                val from = initialState.destination.route
+                if (from == "animation") ExitTransition.None
+                else slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(animationDuration)) + fadeOut(tween(animationDuration))
+            }
+
+            val navigationPopEnterTransition:
+                    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition? = {
+                val from = initialState.destination.route
+                if (from == "animation") EnterTransition.None else null
+            }
+
+            val navigationPopExitTransition:
+                    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition? = {
+                val from = initialState.destination.route
+                if (from == "animation") ExitTransition.None else null
+            }
 
             val drawerState = rememberDrawerState(DrawerValue.Closed)
+            val AppBarHeight = 64.dp // match your TopNavBar height
 
             AppTheme {
                 // Observe current backstack entry for determining navMode
@@ -124,27 +129,42 @@ class MainActivity : ComponentActivity() {
                     else -> "default"
                 }
 
-                ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
-                    NavigationDrawerContent(onMenuItemClicked = { menuItem ->
-                        coroutineScope.launch {
-                            drawerState.close()
-                            navigateWithClearBackStack(navController, menuItem)
-                        }
-                    })
-                }) {
-                    Scaffold(topBar = {
-                        if (navMode != "input" && navMode != "animation") {
-                            TopNavBar(
-                                onMenuClick = {
-                                    coroutineScope.launch { drawerState.open() }
-                                },
-                                title = getTitleFromBackStack(
-                                    context,
-                                    navController.currentBackStackEntry?.destination?.route
+                val drawerEnabled = navMode == "default"
+
+                // Ensure the drawer never appears open when changing modes
+                LaunchedEffect(drawerEnabled) {
+                    drawerState.snapTo(DrawerValue.Closed)
+                }
+
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    gesturesEnabled = drawerEnabled,
+                    // Keep drawer content mounted to avoid layout churn; just disable gestures
+                    drawerContent = {
+                        NavigationDrawerContent(onMenuItemClicked = { menuItem ->
+                            coroutineScope.launch {
+                                drawerState.close()
+                                navigateWithClearBackStack(navController, menuItem)
+                            }
+                        })
+                    }
+                ) {
+                    Scaffold(
+                        topBar = {
+                            if (drawerEnabled) {
+                                TopNavBar(
+                                    onMenuClick = { coroutineScope.launch { drawerState.open() } },
+                                    title = getTitleFromBackStack(
+                                        context,
+                                        navController.currentBackStackEntry?.destination?.route
+                                    )
                                 )
-                            )
+                            } else {
+                                // Reserve app bar height so content padding stays stable (prevents flicker)
+                                Spacer(Modifier.height(AppBarHeight))
+                            }
                         }
-                    }) { paddingValues ->
+                    ) { paddingValues ->
                         NavHost(
                             navController = navController,
                             startDestination = startDestination,
@@ -155,11 +175,12 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 route = "animation",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
-                                SimpleWaterFillAnimationScreen(
-                                    animationDuration = 1500
-                                ) {
+                                // Make sure this only navigates once after the animation completes
+                                SimpleWaterFillAnimationScreen(animationDuration = 1500) {
                                     navigateWithClearBackStack(
                                         navController,
                                         if (showInputScreen) "input" else "home"
@@ -169,53 +190,56 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 route = "input",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
-                                InitialSetupScreen(
-                                    context = context
-                                ) {
-                                    navigateWithClearBackStack(
-                                        navController,
-                                        "home"
-                                    )
+                                InitialSetupScreen(context = context) {
+                                    navigateWithClearBackStack(navController, "home")
                                 }
                             }
                             composable(
                                 route = "home",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
-                                HomeScreen(
-                                    context = context, waterIntakeRepository = waterIntakeRepository
-                                )
+                                HomeScreen(context = context, waterIntakeRepository = waterIntakeRepository)
                             }
                             composable(
                                 route = "insights",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
-                                InsightsScreen(
-                                    context = context, waterIntakeRepository = waterIntakeRepository
-                                )
+                                InsightsScreen(context = context, waterIntakeRepository = waterIntakeRepository)
                             }
                             composable(
                                 route = "settings",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
                                 SettingsScreen(context)
                             }
                             composable(
                                 route = "reminders",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
                                 RemindersScreen(context = context)
                             }
                             composable(
                                 route = "support me",
                                 enterTransition = navigationEnterTransition,
-                                exitTransition = navigationExitTransition
+                                exitTransition = navigationExitTransition,
+                                popEnterTransition = navigationPopEnterTransition,
+                                popExitTransition = navigationPopExitTransition
                             ) {
                                 SupportScreen(context)
                             }
@@ -225,7 +249,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 fun navigateWithClearBackStack(navController: NavController, route: String) {

@@ -72,12 +72,3 @@ object NextTickCalculator {
         }
     }
 }
-
-
-fun io.github.stcksmsh.kap.model.TimeOfDay.toTodayCalendar(): java.util.Calendar =
-    java.util.Calendar.getInstance().apply {
-        set(java.util.Calendar.HOUR_OF_DAY, hour)
-        set(java.util.Calendar.MINUTE, minute)
-        set(java.util.Calendar.SECOND, 0)
-        set(java.util.Calendar.MILLISECOND, 0)
-    }

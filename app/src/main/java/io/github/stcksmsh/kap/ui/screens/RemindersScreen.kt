@@ -4,7 +4,7 @@ import android.Manifest
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.util.Log
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -19,99 +19,70 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import io.github.stcksmsh.kap.BuildConfig
+import io.github.stcksmsh.kap.R
 import io.github.stcksmsh.kap.data.loadReminderSettings
 import io.github.stcksmsh.kap.data.saveReminderSettings
 import io.github.stcksmsh.kap.model.ReminderSettings
 import io.github.stcksmsh.kap.model.TimeOfDay
 import io.github.stcksmsh.kap.notifications.ReminderScheduler
-import io.github.stcksmsh.kap.R
 import java.util.Locale
 
 @Composable
 fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
+    // Load persisted settings once
+    var persisted by remember { mutableStateOf(loadReminderSettings(context)) }
 
-    var reminderSettings = loadReminderSettings(context)
+    var remindersEnabled by remember { mutableStateOf(persisted.remindersEnabled) }
+    var intervalMinutes by remember { mutableIntStateOf(persisted.intervalMinutes) }
+    var startTime by remember { mutableStateOf(persisted.startTime) }
+    var endTime by remember { mutableStateOf(persisted.endTime) }
+    var soundEnabled by remember { mutableStateOf(persisted.soundEnabled) }
+    var vibrationEnabled by remember { mutableStateOf(persisted.vibrationEnabled) }
 
-    var remindersEnabled by remember { mutableStateOf(reminderSettings.remindersEnabled) }
-    var intervalMinutes by remember { mutableIntStateOf(reminderSettings.intervalMinutes) }
-    var startTime by remember { mutableStateOf(reminderSettings.startTime) }
-    var endTime by remember { mutableStateOf(reminderSettings.endTime) }
-    var soundEnabled by remember { mutableStateOf(reminderSettings.soundEnabled) }
-    var vibrationEnabled by remember { mutableStateOf(reminderSettings.vibrationEnabled) }
-
+    // Notifications permission (POST_NOTIFICATIONS on Android 13+)
     var hasNotificationPermission by remember {
         mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+            if (Build.VERSION.SDK_INT >= 33)
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            else true
         )
     }
 
-    var hasIgnoreBatteryOptimizationsPermission by remember {
-        mutableStateOf(
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        )
+    val hasRequiredPermissions by remember { derivedStateOf { hasNotificationPermission } }
+
+    val notifLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        hasNotificationPermission = granted || Build.VERSION.SDK_INT < 33
     }
 
-    var hasAllPermissions = hasNotificationPermission && hasIgnoreBatteryOptimizationsPermission
-
-    val requiredPermissions = arrayOf(
-        Manifest.permission.POST_NOTIFICATIONS,
-        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-    )
-
-
-    val requestPermissionsLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissionsResult ->
-        permissionsResult.forEach { (permission, isGranted) ->
-            when (permission) {
-                Manifest.permission.POST_NOTIFICATIONS -> {
-                    hasNotificationPermission = isGranted
-                }
-                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
-                    hasIgnoreBatteryOptimizationsPermission = isGranted
-                }
-            }
-        }
-    }
-
+    // Persist + (re)schedule when relevant state changes
     LaunchedEffect(
-        remindersEnabled,
-        intervalMinutes,
-        startTime,
-        endTime,
-        soundEnabled,
-        vibrationEnabled,
-        hasAllPermissions
+        remindersEnabled, intervalMinutes, startTime, endTime,
+        soundEnabled, vibrationEnabled, hasRequiredPermissions
     ) {
-        // if reminders are "newly" enabled, schedule them
-        if (remindersEnabled && hasAllPermissions) {
-            ReminderScheduler.scheduleReminders(context, reminderSettings)
-        }
-        // if reminders are disabled or notification permission is revoked
-        if (!remindersEnabled || !hasAllPermissions) {
-            ReminderScheduler.cancelReminders(context)
-        }
-        reminderSettings = ReminderSettings(
-            remindersEnabled = remindersEnabled && hasAllPermissions,
+        val newSettings = ReminderSettings(
+            remindersEnabled = remindersEnabled && hasRequiredPermissions,
             intervalMinutes = intervalMinutes,
             startTime = startTime,
             endTime = endTime,
             soundEnabled = soundEnabled,
             vibrationEnabled = vibrationEnabled
         )
-        saveReminderSettings(
-            context,
-            reminderSettings
-        )
-        ReminderScheduler.cancelReminders(context)
+        saveReminderSettings(context, newSettings)
+        persisted = newSettings
+
+        if (newSettings.remindersEnabled) {
+            ReminderScheduler.scheduleReminders(context, newSettings)
+        } else {
+            ReminderScheduler.cancelReminders(context)
+        }
     }
 
+    // UI
     Column(
         modifier = modifier
             .padding(64.dp)
@@ -120,40 +91,35 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
     ) {
         SwitchOptionRow(
             label = stringResource(R.string.enable_reminders),
-            isEnabled = remindersEnabled && hasAllPermissions,
-            onToggle = { newCheckedState ->
-                if(!hasAllPermissions) {
-                    requestPermissionsLauncher.launch(requiredPermissions)
+            isEnabled = remindersEnabled,
+            onToggle = { enable ->
+                if (enable && Build.VERSION.SDK_INT >= 33 && !hasNotificationPermission) {
+                    notifLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
-                remindersEnabled = newCheckedState
+                remindersEnabled = enable
             }
         )
+
+        Spacer(Modifier.height(16.dp))
 
         SwitchOptionRow(
             label = stringResource(R.string.enable_vibration),
             isEnabled = vibrationEnabled,
-            onToggle = { newCheckedState ->
-                vibrationEnabled = newCheckedState
-            },
+            onToggle = { vibrationEnabled = it },
         )
 
         SwitchOptionRow(
             label = stringResource(R.string.enable_sound),
             isEnabled = soundEnabled,
-            onToggle = { newCheckedState ->
-                soundEnabled = newCheckedState
-            }
+            onToggle = { soundEnabled = it }
         )
-
 
         TimeOfDayInputRow(
             label = stringResource(R.string.start_of_day),
             initialTime = startTime,
-            onTimeChanged = { newStartTime ->
-                startTime = newStartTime
-                if (endTime - newStartTime < 15) {
-                    endTime = newStartTime + 15
-                }
+            onTimeChanged = { newStart ->
+                startTime = newStart
+                if (endTime - newStart < 15) endTime = newStart + 15
             },
             minimumTime = TimeOfDay(0, 15),
             context = context
@@ -162,11 +128,9 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         TimeOfDayInputRow(
             label = stringResource(R.string.end_of_day),
             initialTime = endTime,
-            onTimeChanged = { newEndTime ->
-                endTime = newEndTime
-                if (newEndTime - startTime < 15) {
-                    startTime = newEndTime - 15
-                }
+            onTimeChanged = { newEnd ->
+                endTime = newEnd
+                if (newEnd - startTime < 15) startTime = newEnd - 15
             },
             context = context
         )
@@ -174,8 +138,8 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         TimeOfDayInputRow(
             label = stringResource(R.string.remind_me_every),
             initialTime = TimeOfDay(
-                hour = reminderSettings.intervalMinutes / 60,
-                minute = reminderSettings.intervalMinutes % 60
+                hour = intervalMinutes / 60,
+                minute = intervalMinutes % 60
             ),
             onTimeChanged = { newInterval ->
                 intervalMinutes = newInterval.hour * 60 + newInterval.minute
@@ -184,7 +148,7 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         )
 
         if (BuildConfig.DEBUG) {
-            Spacer(Modifier.weight(1f)) // Push the button to the bottom in debug builds
+            Spacer(Modifier.weight(1f))
             Button(
                 onClick = { NotificationHelper.showNotification(context) },
                 enabled = remindersEnabled && hasNotificationPermission
@@ -209,16 +173,8 @@ fun SwitchOptionRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = label,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.weight(1f)
-        )
-
-        Switch(
-            checked = isEnabled,
-            onCheckedChange = onToggle
-        )
+        Text(text = label, textAlign = TextAlign.Start, modifier = Modifier.weight(1f))
+        Switch(checked = isEnabled, onCheckedChange = onToggle)
     }
 }
 
@@ -239,13 +195,8 @@ fun TimeOfDayInputRow(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Label for the row
-        Text(
-            text = label,
-            modifier = Modifier.weight(1f)
-        )
+        Text(text = label, modifier = Modifier.weight(1f))
 
-        // Button to display the current time and open the time picker
         Button(onClick = {
             showTimePickerDialog(
                 context = context,
@@ -255,18 +206,10 @@ fun TimeOfDayInputRow(
                         selectedTime = newTime
                         onTimeChanged(newTime)
                     }
-
                 }
             )
         }) {
-            Text(
-                text = String.format(
-                    Locale.getDefault(),
-                    "%02d:%02d",
-                    selectedTime.hour,
-                    selectedTime.minute
-                )
-            )
+            Text(String.format(Locale.getDefault(), "%02d:%02d", selectedTime.hour, selectedTime.minute))
         }
     }
 }
@@ -283,6 +226,6 @@ fun showTimePickerDialog(
         },
         initialTime.hour,
         initialTime.minute,
-        true // Use 24-hour format
+        true
     ).show()
 }

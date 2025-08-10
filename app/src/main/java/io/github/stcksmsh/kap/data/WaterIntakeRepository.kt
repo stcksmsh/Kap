@@ -24,15 +24,15 @@ class WaterIntakeRepository(private val waterIntakeDao: WaterIntakeDao) {
         }
     }
 
-    fun getCurrentIntake(): StateFlow<Float> {
+    fun getCurrentIntake(): StateFlow<Double> {
         return waterIntakeDao.getTodaysIntake().stateIn(
             scope = coroutineScope,
             started = SharingStarted.Eagerly,
-            initialValue = 0f
+            initialValue = 0.0
         )
     }
 
-    fun getCurrentIntakeValue(): Float {
+    fun getCurrentIntakeValue(): Double {
         return waterIntakeDao.getTodaysIntakeValue()
     }
 

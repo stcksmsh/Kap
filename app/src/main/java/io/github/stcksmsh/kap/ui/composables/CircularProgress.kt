@@ -1,6 +1,5 @@
 package io.github.stcksmsh.kap.ui.composables
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,8 +26,8 @@ import kotlin.math.roundToInt
 @Composable
 fun CircularProgress(
     selectedVolumeUnit: VolumeUnits,
-    current: Float,
-    max: Float,
+    current: Double,
+    max: Double,
     modifier: Modifier = Modifier
 ) {
     val progress = current / max
@@ -42,7 +41,7 @@ fun CircularProgress(
         // Circular progress indicator
         CircularProgressIndicator(
             progress = {
-                progress
+                progress.toFloat()
             },
             strokeWidth = 12.dp,
             modifier = Modifier
@@ -57,7 +56,7 @@ fun CircularProgress(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = selectedVolumeUnit.convertMillisToUnitString(current),
+                text = selectedVolumeUnit.toUnitWithLabel(current),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -72,7 +71,7 @@ fun CircularProgress(
                     .padding(top = 4.dp)
             )
             Text(
-                text = selectedVolumeUnit.convertMillisToUnitString(max),
+                text = selectedVolumeUnit.toUnitWithLabel(max),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
                 fontWeight = FontWeight.SemiBold,

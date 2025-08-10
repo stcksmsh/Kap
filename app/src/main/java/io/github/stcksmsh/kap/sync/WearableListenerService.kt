@@ -20,7 +20,7 @@ class WearableMessageListenerService : WearableListenerService() {
         Log.d(TAG, "Received message: ${String(messageEvent.data)}")
         when (messageEvent.path) {
             DataLayerPaths.WATER_INTAKE_UPDATE_PATH -> {
-                val intakeAmount = String(messageEvent.data).toFloat()
+                val intakeAmount = String(messageEvent.data).toDouble()
                 Log.d(TAG, "Received water intake update: $intakeAmount")
 
                 // Handle the water intake update
@@ -33,7 +33,7 @@ class WearableMessageListenerService : WearableListenerService() {
         }
     }
 
-    private fun processWaterIntakeUpdate(intakeAmount: Float) {
+    private fun processWaterIntakeUpdate(intakeAmount: Double) {
         // Update your app's database, state, or notify the user
         // For example:
         val waterIntakeRepository = WaterIntakeRepository(

@@ -36,6 +36,6 @@ fun loadAppSettings(context: Context): AppSettings {
             )!!
         ),
         quickWaterAdditionVolumes = sharedPreferences.getString("quickWaterAdditionVolumes", null)
-            ?.split(';')?.map { it.toFloat() } ?: AppSettings.defaultQuickWaterAdditionVolumes
+            ?.split(';')?.map { it.toDouble() } ?: AppSettings.defaultQuickWaterAdditionVolumes
     )
 }

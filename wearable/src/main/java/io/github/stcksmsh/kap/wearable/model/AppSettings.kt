@@ -28,7 +28,7 @@ enum class WeightUnits(
     }
 
     @Composable
-    fun getLocalizedSymbol(): String {
+    fun label(): String {
         return when (this) {
             KGS -> stringResource(R.string.kilograms)
             POUNDS -> stringResource(R.string.pounds)
@@ -38,7 +38,7 @@ enum class WeightUnits(
 
     // these exist because the widget doesn't have access to the Composable function, and it just throws `java.lang.IllegalStateException: CompositionLocal LocalConfiguration not present`
 
-    fun getLocalizedSymbol(context: Context): String{
+    fun label(context: Context): String{
         return when (this) {
             KGS -> context.getString(R.string.kilograms)
             POUNDS -> context.getString(R.string.pounds)
@@ -68,8 +68,8 @@ enum class VolumeUnits(
     }
 
     @Composable
-    fun convertMillisToUnitString(value: Float): String {
-        return "${convertMillisToString(value)} ${getLocalizedSymbol()}"
+    fun toUnitWithLabel(value: Float): String {
+        return "${convertMillisToString(value)} ${label()}"
     }
 
     fun convertStringToMillis(value: String): Float? {
@@ -77,7 +77,7 @@ enum class VolumeUnits(
     }
 
     @Composable
-    fun getLocalizedSymbol(): String {
+    fun label(): String {
         return when (this) {
             MILLILITERS -> stringResource(R.string.milliliters)
             LITERS -> stringResource(R.string.liters)
@@ -90,11 +90,11 @@ enum class VolumeUnits(
 
     // these exist because the widget doesn't have access to the Composable function, and it just throws `java.lang.IllegalStateException: CompositionLocal LocalConfiguration not present`
 
-    fun convertMillisToUnitString(context: Context, value: Float): String {
-        return "${convertMillisToString(value)} ${getLocalizedSymbol(context)}"
+    fun toUnitWithLabel(context: Context, value: Float): String {
+        return "${convertMillisToString(value)} ${label(context)}"
     }
 
-    fun getLocalizedSymbol(context: Context): String{
+    fun label(context: Context): String{
         return when (this) {
             MILLILITERS -> context.getString(R.string.milliliters)
             LITERS -> context.getString(R.string.liters)

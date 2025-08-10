@@ -75,7 +75,7 @@ fun VolumeUnitDropdown(
         expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier
     ) {
         TextField(
-            value = selectedVolumeUnit.getLocalizedSymbol(),
+            value = selectedVolumeUnit.label(),
             onValueChange = {},
             readOnly = true,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
@@ -88,7 +88,7 @@ fun VolumeUnitDropdown(
             VolumeUnits.entries.forEach { unit ->
                 DropdownMenuItem(text = {
                     Text(
-                        text = "${unit.getLocalizedSymbol()} - ${unit.fullName}",
+                        text = "${unit.label()} - ${unit.fullName}",
                         style = AppTypography.bodySmall,
                         textAlign = TextAlign.Start,
                     )
@@ -114,7 +114,7 @@ fun WeightUnitDropdown(
         expanded = expanded, onExpandedChange = { expanded = !expanded }, modifier = modifier
     ) {
         TextField(
-            value = selectedWeightUnit.getLocalizedSymbol(),
+            value = selectedWeightUnit.label(),
             onValueChange = {},
             readOnly = true,
             modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable),
@@ -127,7 +127,7 @@ fun WeightUnitDropdown(
             WeightUnits.entries.forEach { unit ->
                 DropdownMenuItem(text = {
                     Text(
-                        text = "${unit.getLocalizedSymbol()} - ${unit.fullName}",
+                        text = "${unit.label()} - ${unit.fullName}",
                         style = AppTypography.bodySmall,
                         textAlign = TextAlign.Start,
                     )

@@ -13,8 +13,8 @@ import io.github.stcksmsh.kap.R
 
 @Composable
 fun DailyIntakeProgress(
-    dailyGoalMillis: Float,
-    currentIntakeMillis: Float,
+    dailyGoalMillis: Double,
+    currentIntakeMillis: Double,
     volumeUnit: VolumeUnits,
     modifier: Modifier = Modifier
 ) {
@@ -26,20 +26,20 @@ fun DailyIntakeProgress(
     ) {
         // Display daily target
         Text(
-            text = stringResource(R.string.daily_goal_template, volumeUnit.convertMillisToUnitString(dailyGoalMillis)),
+            text = stringResource(R.string.daily_goal_template, volumeUnit.toUnitWithLabel(dailyGoalMillis)),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         // Display current intake
         Text(
-            text = stringResource(R.string.current_intake_template, volumeUnit.convertMillisToUnitString(currentIntakeMillis)),
+            text = stringResource(R.string.current_intake_template, volumeUnit.toUnitWithLabel(currentIntakeMillis)),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth()
         )
 
         // Progress bar with percentage
-        val progress = (currentIntakeMillis / dailyGoalMillis).coerceIn(0f, 1f)
+        val progress = (currentIntakeMillis / dailyGoalMillis).coerceIn(0.0, 1.0)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -53,7 +53,7 @@ fun DailyIntakeProgress(
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .fillMaxWidth(fraction = progress)
+                    .fillMaxWidth(fraction = progress.toFloat())
                     .background(
                         color = MaterialTheme.colorScheme.primary,
                         shape = MaterialTheme.shapes.medium

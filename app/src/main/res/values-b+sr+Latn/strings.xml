@@ -28,6 +28,7 @@
     <string name="end_of_day">Kraj dana</string>
     <string name="remind_me_every">Podsećaj me svakih</string>
     <string name="send_notification_debug">Pošalji obaveštenje</string>
+    <string name="request_battery_optimizations_whitelist">Spriječite da štednja baterija odlaže podsjetnike</string>
 
     <!-- Support me screen -->
     <string name="support_me_screen_title">Podrži me</string>

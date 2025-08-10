@@ -10,37 +10,42 @@ const val reminderTitle = "Remember to stay hydrated!"
  * @property hour The hour of the day (0-23).
  * @property minute The minute of the hour (0-59).
  */
-data class TimeOfDay(
-    val hour: Int, val minute: Int
-) {
+data class TimeOfDay(val hour: Int, val minute: Int) {
+    init {
+        require(hour in 0..23 && minute in 0..59) { "Invalid time: $hour:$minute" }
+    }
+
     companion object {
         fun now(): TimeOfDay {
-            val now = System.currentTimeMillis()
-            val calendar = java.util.Calendar.getInstance()
-            calendar.timeInMillis = now
-            return TimeOfDay(
-                calendar.get(java.util.Calendar.HOUR_OF_DAY),
-                calendar.get(java.util.Calendar.MINUTE)
-            )
+            val cal = java.util.Calendar.getInstance()
+            return TimeOfDay(cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE))
         }
     }
 
-    operator fun minus(other: TimeOfDay): Int {
-        return (hour - other.hour) * 60 + (minute - other.minute)
+    /** Minutes since 00:00 */
+    fun toMinutes() = hour * 60 + minute
+
+    /** From minutes since 00:00 (mod 24h) */
+    private fun fromMinutes(total: Int): TimeOfDay {
+        val m = ((total % (24 * 60)) + (24 * 60)) % (24 * 60)
+        return TimeOfDay(m / 60, m % 60)
     }
 
-    operator fun minus(minute: Int): TimeOfDay {
-        val newMinute = (this.minute - minute + 60) % 60
-        val newHour = (hour - (60 + minute - this.minute) / 60 + 24) % 24
-        return TimeOfDay(newHour, newMinute)
-    }
+    operator fun plus(minutes: Int): TimeOfDay = fromMinutes(toMinutes() + minutes)
+    operator fun minus(minutes: Int): TimeOfDay = fromMinutes(toMinutes() - minutes)
 
-    operator fun plus(minutes: Int): TimeOfDay {
-        val newMinute = (minute + minutes) % 60
-        val newHour = (hour + (minute + minutes) / 60) % 24
-        return TimeOfDay(newHour, newMinute)
-    }
+    /** Signed minutes difference this - other in [-1439, 1439] */
+    operator fun minus(other: TimeOfDay): Int = this.toMinutes() - other.toMinutes()
+
+    fun toTodayCalendar(): java.util.Calendar =
+        java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, hour)
+            set(java.util.Calendar.MINUTE, minute)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
 }
+
 
 /**
  * Settings for reminders (notifications)

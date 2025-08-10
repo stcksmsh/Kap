@@ -35,9 +35,9 @@ fun SettingsScreen(context: Context, modifier: Modifier = Modifier) {
     var selectedWeightUnitInput by remember { mutableStateOf(appSettings.weightUnit) }
     var selectedVolumeUnitInput by remember { mutableStateOf(appSettings.volumeUnit) }
     var ageInput by remember { mutableIntStateOf(userData.age) }
-    var weightInput by remember { mutableFloatStateOf(userData.weight) }
+    var weightInput by remember { mutableDoubleStateOf(userData.weight) }
     var dailyPhysicalActivityInput by remember { mutableIntStateOf(userData.dailyPhysicalActivity) }
-    var dailyWaterGoalInput by remember { mutableFloatStateOf(userData.dailyWaterGoal) }
+    var dailyWaterGoalInput by remember { mutableDoubleStateOf(userData.dailyWaterGoal) }
     var quickWaterAdditionVolumesInput by remember { mutableStateOf(appSettings.quickWaterAdditionVolumes) }
     var startupAnimationEnabledInput by remember { mutableStateOf(appSettings.startupAnimationEnabled) }
 

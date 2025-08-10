@@ -38,9 +38,9 @@ fun InitialSetupScreen(
         var selectedWeightUnitInput by remember { mutableStateOf(appSettings.weightUnit) }
         var selectedVolumeUnitInput by remember { mutableStateOf(appSettings.volumeUnit) }
         var ageInput by remember { mutableIntStateOf(0) }
-        var weightInput by remember { mutableFloatStateOf(0f) }
+        var weightInput by remember { mutableDoubleStateOf(0.0) }
         var dailyPhysicalActivityInput by remember { mutableIntStateOf(-1) }
-        var dailyWaterGoalInput by remember { mutableFloatStateOf(0f) }
+        var dailyWaterGoalInput by remember { mutableDoubleStateOf(0.0) }
 
 
         UserSettingsInput(

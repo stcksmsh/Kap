@@ -13,7 +13,7 @@ import io.github.stcksmsh.kap.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopNavBar(
-    onMenuClick: () -> Unit, // Callback for burger menu
+    onMenuClick: (() -> Unit)? = null, // Callback for burger menu
     title: String, // Title of the screen
     modifier: Modifier = Modifier
 ) {
@@ -26,12 +26,14 @@ fun TopNavBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.menu),
-                    tint = MaterialTheme.colorScheme.onPrimary
-                )
+            if (onMenuClick != null) {
+                IconButton(onClick = onMenuClick) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        contentDescription = stringResource(R.string.menu),
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(

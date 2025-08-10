@@ -156,7 +156,7 @@ fun getDateRangeForFilterIndex(filterIndex: Int): Pair<Date, Date> {
 
 @Composable
 fun WaterIntakeGraph(
-    startDate: Date, endDate: Date, data: List<WaterIntake>, dailyWaterGoal: Float
+    startDate: Date, endDate: Date, data: List<WaterIntake>, dailyWaterGoal: Double
 ) {
 
     val correctedEndDate =

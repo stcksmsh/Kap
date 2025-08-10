@@ -29,7 +29,7 @@ fun WaterIntakeInput(
 ) {
 
     val volumes = listOf(
-        200.0f, 250.0f, 330.0f, 500.0f, 750.0f, -1.0f
+        200.0, 250.0, 330.0, 500.0, 750.0, -1.0
     )
 
     val selectedVolumeUnit = loadAppSettings(context).volumeUnit
@@ -43,7 +43,7 @@ fun WaterIntakeInput(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(volumes) { volume ->
-            if (volume == -1.0f) {
+            if (volume == -1.0) {
                 Text(stringResource(R.string.custom))
             } else {
                 Button(
@@ -57,7 +57,7 @@ fun WaterIntakeInput(
                         }
                     }
                 ) {
-                    Text(selectedVolumeUnit.convertMillisToString(volume))
+                    Text(selectedVolumeUnit.toUnitWithLabel(volume))
                 }
             }
         }

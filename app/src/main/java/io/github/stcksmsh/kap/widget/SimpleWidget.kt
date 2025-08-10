@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.*
@@ -44,11 +45,11 @@ class SimpleWidget : GlanceAppWidget() {
             val volumeUnit = VolumeUnits.valueOf(
                 prefs[PreferencesKeys.SELECTED_VOLUME_UNIT] ?: VolumeUnits.MILLILITERS.name
             )
-            val dailyWaterGoal = prefs[PreferencesKeys.DAILY_GOAL] ?: 0f
-            val currentIntake = prefs[PreferencesKeys.CURRENT_INTAKE] ?: 0f
+            val dailyWaterGoal = prefs[PreferencesKeys.DAILY_GOAL] ?: 0.0
+            val currentIntake = prefs[PreferencesKeys.CURRENT_INTAKE] ?: 0.0
             val quickAdditionVolumes = prefs[PreferencesKeys.QUICK_WATER_ADDITIONS]
                 ?.split(";")
-                ?.map { it.toFloat() }
+                ?.map { it.toDouble() }
                 ?: emptyList()
 
             if (quickAdditionVolumes.isEmpty()) {
@@ -80,9 +81,9 @@ fun SetupPrompt(context: Context) {
 fun WidgetLayout(
     context: Context,
     volumeUnit: VolumeUnits,
-    dailyGoal: Float,
-    currentIntake: Float,
-    quickAddVolumes: List<Float>
+    dailyGoal: Double,
+    currentIntake: Double,
+    quickAddVolumes: List<Double>
 ) {
     GlanceAppTheme {
         Column(
@@ -107,7 +108,7 @@ fun WidgetLayout(
             // Progress Bar Section
             WaterProgressBar(
                 context = context,
-                progress = (currentIntake / dailyGoal).coerceAtMost(1f),
+                progress = (currentIntake / dailyGoal).coerceAtMost(1.0).toFloat(),
                 currentIntake = currentIntake,
                 goalIntake = dailyGoal,
                 volumeUnit = volumeUnit
@@ -143,8 +144,8 @@ fun WidgetLayout(
 fun WaterProgressBar(
     context: Context,
     progress: Float,
-    currentIntake: Float,
-    goalIntake: Float,
+    currentIntake: Double,
+    goalIntake: Double,
     volumeUnit: VolumeUnits
 ) {
     Column(
@@ -154,7 +155,7 @@ fun WaterProgressBar(
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally
     ) {
         Text(
-            text = "${volumeUnit.convertMillisToUnitString(context, currentIntake)} / ${volumeUnit.convertMillisToUnitString(context, goalIntake)}",
+            text = "${volumeUnit.toUnitWithLabel(context, currentIntake)} / ${volumeUnit.toUnitWithLabel(context, goalIntake)}",
             style = TextStyle(
                 color = GlanceTheme.colors.primary,
                 fontSize = 16.sp
@@ -176,7 +177,7 @@ fun WaterProgressBar(
 
 // Composable for Quick Add Buttons
 @Composable
-fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Float>, volumeUnit: VolumeUnits) {
+fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Double>, volumeUnit: VolumeUnits) {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
@@ -185,9 +186,9 @@ fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Float>, volumeUn
     ) {
         quickAddVolumes.forEachIndexed { index, intake ->
             Button(
-                text = "+${volumeUnit.convertMillisToUnitString(context, intake)}",
+                text = "+${volumeUnit.toUnitWithLabel(context, intake)}",
                 onClick = actionRunCallback<AddWaterAction>(
-                    parameters = actionParametersOf(ActionParameters.Key<Float>("amount") to intake)
+                    parameters = actionParametersOf(ActionParameters.Key<Double>("amount") to intake)
                 ),
                 modifier = GlanceModifier
                     .padding(4.dp) // Spacing around each button
@@ -207,7 +208,7 @@ fun AddWaterButtonGroup(context: Context, quickAddVolumes: List<Float>, volumeUn
 // Action for Adding Water
 class AddWaterAction : ActionCallback {
     override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        val amount = parameters[ActionParameters.Key<Float>("amount")] ?: 0f
+        val amount = parameters[ActionParameters.Key<Double>("amount")] ?: 0.0
         val repository = WaterIntakeRepository(WaterIntakeDatabase.getDatabase(context).waterIntakeDao())
         repository.insertWaterIntake(WaterIntake(intakeAmount = amount, date = Date()))
         updateWaterIntakeWidgetState(context)
@@ -216,8 +217,8 @@ class AddWaterAction : ActionCallback {
 
 // Preference Keys for Widget State
 object PreferencesKeys {
-    val CURRENT_INTAKE = floatPreferencesKey("current_intake")
-    val DAILY_GOAL = floatPreferencesKey("daily_goal")
+    val CURRENT_INTAKE = doublePreferencesKey("current_intake")
+    val DAILY_GOAL = doublePreferencesKey("daily_goal")
     val SELECTED_VOLUME_UNIT = stringPreferencesKey("selected_volume_unit")
     val QUICK_WATER_ADDITIONS = stringPreferencesKey("quick_water_additions")
 }
