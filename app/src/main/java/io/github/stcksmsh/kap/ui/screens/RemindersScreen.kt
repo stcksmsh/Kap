@@ -4,7 +4,7 @@ import android.Manifest
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -23,7 +23,6 @@ import io.github.stcksmsh.kap.data.loadReminderSettings
 import io.github.stcksmsh.kap.data.saveReminderSettings
 import io.github.stcksmsh.kap.model.ReminderSettings
 import io.github.stcksmsh.kap.model.TimeOfDay
-import io.github.stcksmsh.kap.notifications.NotificationHelper
 import io.github.stcksmsh.kap.notifications.ReminderScheduler
 import io.github.stcksmsh.kap.R
 import java.util.Locale
@@ -42,29 +41,27 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
 
     var hasNotificationPermission by remember {
         mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            } else true
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
 
     var hasIgnoreBatteryOptimizationsPermission by remember {
         mutableStateOf(
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            } else true
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         )
     }
 
-    val requiredPermissions = if(hasNotificationPermission) emptyArray<String>() else arrayOf(
-        android.Manifest.permission.POST_NOTIFICATIONS, // Example permission
-        android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS // Add more as needed
+    var hasAllPermissions = hasNotificationPermission && hasIgnoreBatteryOptimizationsPermission
+
+    val requiredPermissions = arrayOf(
+        Manifest.permission.POST_NOTIFICATIONS,
+        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
     )
 
 
@@ -73,13 +70,12 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
     ) { permissionsResult ->
         permissionsResult.forEach { (permission, isGranted) ->
             when (permission) {
-                android.Manifest.permission.POST_NOTIFICATIONS -> {
+                Manifest.permission.POST_NOTIFICATIONS -> {
                     hasNotificationPermission = isGranted
                 }
-                android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
+                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> {
                     hasIgnoreBatteryOptimizationsPermission = isGranted
                 }
-                // Handle other permissions here
             }
         }
     }
@@ -91,18 +87,18 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
         endTime,
         soundEnabled,
         vibrationEnabled,
-        hasNotificationPermission
+        hasAllPermissions
     ) {
         // if reminders are "newly" enabled, schedule them
-        if (remindersEnabled && hasNotificationPermission && !reminderSettings.remindersEnabled) {
+        if (remindersEnabled && hasAllPermissions) {
             ReminderScheduler.scheduleReminders(context, reminderSettings)
         }
         // if reminders are disabled or notification permission is revoked
-        if (!remindersEnabled || !hasNotificationPermission) {
+        if (!remindersEnabled || !hasAllPermissions) {
             ReminderScheduler.cancelReminders(context)
         }
         reminderSettings = ReminderSettings(
-            remindersEnabled = remindersEnabled && hasNotificationPermission,
+            remindersEnabled = remindersEnabled && hasAllPermissions,
             intervalMinutes = intervalMinutes,
             startTime = startTime,
             endTime = endTime,
@@ -124,31 +120,30 @@ fun RemindersScreen(context: Context, modifier: Modifier = Modifier) {
     ) {
         SwitchOptionRow(
             label = stringResource(R.string.enable_reminders),
-            isEnabled = remindersEnabled && hasNotificationPermission,
+            isEnabled = remindersEnabled && hasAllPermissions,
             onToggle = { newCheckedState ->
-                if(!hasNotificationPermission || !hasIgnoreBatteryOptimizationsPermission) {
+                if(!hasAllPermissions) {
                     requestPermissionsLauncher.launch(requiredPermissions)
                 }
                 remindersEnabled = newCheckedState
             }
         )
 
-        // TODO: This doesn't work in the current version of the app
-//        SwitchOptionRow(
-//            label = stringResource(R.string.enable_vibration),
-//            isEnabled = vibrationEnabled,
-//            onToggle = { newCheckedState ->
-//                vibrationEnabled = newCheckedState
-//            },
-//        )
-//
-//        SwitchOptionRow(
-//            label = stringResource(R.string.enable_sound),
-//            isEnabled = soundEnabled,
-//            onToggle = { newCheckedState ->
-//                soundEnabled = newCheckedState
-//            }
-//        )
+        SwitchOptionRow(
+            label = stringResource(R.string.enable_vibration),
+            isEnabled = vibrationEnabled,
+            onToggle = { newCheckedState ->
+                vibrationEnabled = newCheckedState
+            },
+        )
+
+        SwitchOptionRow(
+            label = stringResource(R.string.enable_sound),
+            isEnabled = soundEnabled,
+            onToggle = { newCheckedState ->
+                soundEnabled = newCheckedState
+            }
+        )
 
 
         TimeOfDayInputRow(

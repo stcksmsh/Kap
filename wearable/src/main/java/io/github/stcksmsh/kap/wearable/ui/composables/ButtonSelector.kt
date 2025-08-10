@@ -21,7 +21,6 @@ import androidx.wear.compose.foundation.curvedComposable
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.Text
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 @Composable
 fun CircularCurvedButtonSelector(
@@ -93,7 +92,6 @@ fun CircularScrollableRow(
             itemsIndexed(infiniteLabels) { index, label ->
                 Button(
                     onClick = {
-                        Log.d("HydrationStatus", "Button clicked: $index, value: $label")
                         onButtonClick(index % buttonLabels.size) },
                     modifier = Modifier
                         .padding(8.dp)

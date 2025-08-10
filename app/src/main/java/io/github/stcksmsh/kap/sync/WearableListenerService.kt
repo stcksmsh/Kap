@@ -12,19 +12,23 @@ import kotlinx.coroutines.launch
 
 class WearableMessageListenerService : WearableListenerService() {
 
+    companion object {
+        private const val TAG = "WearableMessageListener"
+    }
+
     override fun onMessageReceived(messageEvent: MessageEvent) {
-        Log.d("WearableListener", "Received message: ${String(messageEvent.data)}")
+        Log.d(TAG, "Received message: ${String(messageEvent.data)}")
         when (messageEvent.path) {
             DataLayerPaths.WATER_INTAKE_UPDATE_PATH -> {
                 val intakeAmount = String(messageEvent.data).toFloat()
-                Log.d("WearableListener", "Received water intake update: $intakeAmount")
+                Log.d(TAG, "Received water intake update: $intakeAmount")
 
                 // Handle the water intake update
                 processWaterIntakeUpdate(intakeAmount)
             }
 
             else -> {
-                Log.d("WearableListener", "Unknown message path: ${messageEvent.path}")
+                Log.d(TAG, "Unknown message path: ${messageEvent.path}")
             }
         }
     }
