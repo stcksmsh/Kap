@@ -1,0 +1,11 @@
+{
+  "slug": "kap",
+  "title": "Kap",
+  "tagline": "Water intake tracking for Android — a quick-add widget, streaks, and Health Connect sync.",
+  "status": "shipped",
+  "stack": ["Kotlin", "Jetpack Compose", "Android", "Health Connect"],
+  "repo": "https://github.com/stcksmsh/Kap",
+  "accent": [0.72, 0.14, 220],
+  "featured": true,
+  "order": 5
+}
