@@ -3,15 +3,167 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Kap</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>Kap — water intake tracking for Android</title>
+    <meta name="description" content="Kap is an Android water intake tracker: a one-tap home-screen widget, reminders that land on time, and a daily goal worked out from your age, weight and activity." />
+    <meta property="og:title" content="Kap — water intake tracking for Android" />
+    <meta property="og:description" content="One-tap widget, on-time reminders, a goal worked out from you. Kotlin and Jetpack Compose." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#111318" />
+    <link rel="icon" href="/media/icon.png" type="image/png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;800&family=Roboto+Mono:wght@400;500&display=swap" />
   </head>
   <body>
+    <a class="skip" href="#widget">Skip to the widget</a>
+
+    <header class="hero" id="top">
+      <canvas id="sea" aria-hidden="true"></canvas>
+      <p class="splash" id="splash" aria-hidden="true">KAP</p>
+      <div class="hero-in">
+        <img src="/media/icon.png" alt="" width="72" height="72" class="icon" />
+        <h1>Kap</h1>
+        <p class="lede">Water intake tracking for Android. A one-tap home-screen widget, reminders that arrive on time, and a daily goal worked out from you.</p>
+        <nav class="cta" aria-label="Page">
+          <a class="btn primary" href="#widget">Try the widget</a>
+          <a class="btn" href="#build">Build it</a>
+          <a class="btn ghost" href="https://github.com/stcksmsh/Kap">Source</a>
+        </nav>
+        <p class="hint mono">“kap” is Serbian for “drop”.</p>
+      </div>
+    </header>
+
     <main>
-      <h1>Kap</h1>
-      <p>This site is built and deployed from the <code>website</code> branch of its own repository.</p>
-      <p id="built"></p>
+      <section id="widget" class="band" aria-labelledby="w-h">
+        <div class="head">
+          <p class="eyebrow mono">01 · the widget</p>
+          <h2 id="w-h">Tap. Drink. Done.</h2>
+          <p>The whole point of Kap is the home-screen widget: today's progress and one-tap buttons for the amounts you actually drink. This one works; the glass beside it is your day.</p>
+        </div>
+        <div class="widget-row">
+          <div class="widget" role="group" aria-label="Kap widget">
+            <p class="w-title">Water Intake</p>
+            <p class="w-amount" id="w-amount" aria-live="polite">0 ml / 3,316 ml</p>
+            <div class="w-bar" role="progressbar" aria-label="Progress toward today's goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="w-bar"><i id="w-fill"></i></div>
+            <div class="w-btns" id="w-btns"></div>
+            <p class="w-msg" id="w-msg">Stay hydrated! Keep it up!</p>
+          </div>
+          <div class="glass-wrap">
+            <canvas id="glass" aria-hidden="true"></canvas>
+            <p class="pct" id="pct">0%</p>
+          </div>
+        </div>
+        <div class="log">
+          <div class="log-head">
+            <h3>Today</h3>
+            <button type="button" class="btn small ghost" id="reset">Reset day</button>
+          </div>
+          <ol id="log" aria-label="Today's entries"><li class="empty">Nothing yet. Tap a button.</li></ol>
+        </div>
+        <p class="note">The real widget is a Jetpack Glance widget; its buttons are the quick-add volumes you set in the app (100, 250, 500, 750 and 1000 ml by default). It took three implementations to get here. <a href="https://kostavukicevic.com/projects/kap/">The devlog has the story.</a></p>
+      </section>
+
+      <section id="goal" class="band" aria-labelledby="g-h">
+        <div class="head">
+          <p class="eyebrow mono">02 · your goal</p>
+          <h2 id="g-h">A goal worked out from you</h2>
+          <p>On first launch Kap asks for your age, weight and daily activity and suggests a goal, the same formula as below. Type over it to set your own.</p>
+        </div>
+        <form class="calc" id="calc" onsubmit="return false">
+          <label>Age <input id="age" type="number" min="1" max="120" value="28" inputmode="numeric" /></label>
+          <label>Weight
+            <span class="pair"><input id="weight" type="number" min="1" step="0.1" value="75" inputmode="decimal" />
+              <select id="wunit" aria-label="Weight unit"><option value="KGS">kg</option><option value="POUNDS">lbs</option><option value="STONE">st</option></select></span>
+          </label>
+          <label>Daily physical activity (min) <input id="act" type="number" min="0" max="1440" value="45" inputmode="numeric" /></label>
+          <label>Show in
+            <select id="vunit"><option value="MILLILITERS">ml</option><option value="LITERS">L</option><option value="OUNCES">oz</option><option value="CUPS">cups</option><option value="PINTS">pt</option><option value="GALLONS">gal</option></select>
+          </label>
+        </form>
+        <div class="result">
+          <p class="big" id="goal-out" aria-live="polite">—</p>
+          <ul class="parts mono" id="parts"></ul>
+          <button type="button" class="btn primary small" id="use-goal">Use this goal in the widget</button>
+        </div>
+        <p class="note">From <code>calculateOptimalWaterIntake()</code>: 33 ml per kg of body weight, plus 350 ml per hour of activity, plus 200 ml under 18 or minus 200 ml from 55. A rule of thumb, not medical advice.</p>
+      </section>
+
+      <section id="reminders" class="band" aria-labelledby="r-h">
+        <div class="head">
+          <p class="eyebrow mono">03 · reminders</p>
+          <h2 id="r-h">Reminders that land on time</h2>
+          <p>Pick a window and an interval. Kap schedules one alarm at a time with <code>AlarmManager.setWindow()</code> and a five-minute flex, then schedules the next when it fires. Drag “now” to see where the next one lands.</p>
+        </div>
+        <div class="sched">
+          <div class="sched-ctl">
+            <label>Start of the day <input id="r-start" type="time" value="08:00" /></label>
+            <label>End of the day <input id="r-end" type="time" value="22:00" /></label>
+            <label>Remind me every <span class="pair"><input id="r-int" type="range" min="15" max="240" step="15" value="90" /><output id="r-int-out" class="mono">1 h 30 min</output></span></label>
+            <label>Now <span class="pair"><input id="r-now" type="range" min="0" max="1439" step="1" value="600" /><output id="r-now-out" class="mono">10:00</output></span></label>
+          </div>
+          <div class="day" aria-hidden="true">
+            <div class="day-band" id="day-band"></div>
+            <div id="ticks"></div>
+            <div class="now" id="now-mark"></div>
+            <div class="hours mono"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+          </div>
+          <p class="next" id="next" aria-live="polite"></p>
+        </div>
+        <p class="note">The rule, from <code>NextTickCalculator</code>: before the window, the next reminder is at its start; inside it, round up to the next interval and stay inside the window; after it, tomorrow's start. A <code>BootReceiver</code> puts the alarm back after a restart. It replaced a WorkManager chain that delivered reminders “eventually”.</p>
+      </section>
+
+      <section id="app" class="band" aria-labelledby="a-h">
+        <div class="head">
+          <p class="eyebrow mono">04 · the app</p>
+          <h2 id="a-h">What's inside</h2>
+        </div>
+        <ul class="features">
+          <li><b>Home</b>Today's progress against your goal and the list of what you drank, today and yesterday, with delete.</li>
+          <li><b>Insights</b>A line chart of your intake over the last week, month or year.</li>
+          <li><b>Reminders</b>Window, interval, sound and vibration. Exact enough to be useful.</li>
+          <li><b>Settings</b>Units (ml, L, oz, cups, pt, gal; kg, lbs, st), your quick-add volumes, and the startup animation at the top of this page.</li>
+          <li><b>Widget</b>Jetpack Glance. Progress plus one-tap quick-add; tapping it opens the app.</li>
+          <li><b>Two languages</b>English and Serbian (Latin script).</li>
+          <li class="wip"><b>Wear OS</b>A watch module exists; talking to the phone doesn't work yet.</li>
+          <li class="wip"><b>Health Connect</b>Permissions and read/write plumbing are in; syncing isn't switched on yet.</li>
+        </ul>
+        <figure class="preview">
+          <img src="/media/widget_preview.png" alt="Kap widget preview: Water Intake, 2500 ml of 3316 ml, buttons +200, +250, +500, +750, +1000 ml, Stay hydrated! Keep it up!" width="424" height="276" loading="lazy" />
+          <figcaption>The widget's own preview image, from the app.</figcaption>
+        </figure>
+      </section>
+
+      <section id="story" class="band" aria-labelledby="s-h">
+        <div class="head">
+          <p class="eyebrow mono">05 · build log</p>
+          <h2 id="s-h">How it got here</h2>
+        </div>
+        <ol class="story">
+          <li><time class="mono" datetime="2024-11-05">5 Nov 2024</time><b>Started Kap.</b> “I keep forgetting to drink water, so I'm building an app that nags me about it.” Room database, navigation, a home screen.</li>
+          <li><time class="mono" datetime="2024-11-26">26 Nov 2024</time><b>The widget took four tries.</b> XML <code>AppWidgetProvider</code>, no widget at all, then Jetpack Glance, then Glance made to look decent. Notifications fired for the first time.</li>
+          <li><time class="mono" datetime="2024-12-09">9 Dec 2024</time><b>Tried to get the watch talking to the phone.</b> A Wear OS module and a message client; the round trip didn't work yet. The app became translatable.</li>
+          <li><time class="mono" datetime="2025-08-10">10 Aug 2025</time><b>WorkManager was never going to give exact timing.</b> Reminders moved to <code>AlarmManager</code>, with a boot receiver. Health Connect groundwork went in after.</li>
+        </ol>
+        <p class="more"><a href="https://kostavukicevic.com/projects/kap/">Read the full devlog →</a></p>
+      </section>
+
+      <section id="build" class="band" aria-labelledby="b-h">
+        <div class="head">
+          <p class="eyebrow mono">06 · get it</p>
+          <h2 id="b-h">Build it yourself</h2>
+          <p>Kap isn't on Google Play. It builds from source with Android Studio or Gradle and runs on Android 8.0 and newer.</p>
+        </div>
+        <pre class="mono"><code>git clone https://github.com/stcksmsh/Kap
+cd Kap
+./gradlew :app:installDebug    # phone connected with USB debugging on</code></pre>
+        <p class="note">Kotlin, Jetpack Compose with Material 3, Room, Jetpack Glance, Vico charts, AlarmManager, Health Connect client. The watch module needs Wear OS 3 (API 30).</p>
+      </section>
     </main>
+
+    <footer>
+      <p><a href="https://github.com/stcksmsh/Kap">github.com/stcksmsh/Kap</a> · Made by <a href="https://kostavukicevic.com/">Kosta Vukićević</a>.</p>
+    </footer>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
